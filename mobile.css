@@ -1,0 +1,133 @@
+body {
+    font-family: Lato, arial, sans-serif;
+    text-align: center;
+}
+
+header {
+    height: 100vh;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+/*    background-color: blue;*/
+}
+
+header #namepic {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    
+/*    background-color: red;*/
+}
+
+#namepic #myName {
+    display: flex;
+    align-items: center;
+    max-width: 50%;
+    
+/*    background-color: green;*/
+}
+
+#namepic #myName h1{
+    font-size: 3em;
+}
+
+.gradient {
+    background-image:  linear-gradient(rgba(105,72,3,1) 0%, rgba(191,163,10,1) 42%, rgba(246,219,116,1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+}
+
+#namepic #myPicture {
+    border-radius: 50%;
+    max-width: 50%;
+}
+
+header #clickjump {
+    margin-top: 2.5em;
+}
+
+.material-icons {
+    font-size: 4em !important;
+}
+
+.material-icons:hover {
+    font-size: 8em !important;
+}
+
+/*
+#clickjump:hover{
+    font-size: 1.5em;
+}
+*/
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: lightgray;
+    position: sticky;
+    top: 0%;
+    width: 100%;
+}
+
+nav a:hover {
+    background-color: white;
+}
+
+section {
+    padding: 1.5em;
+}
+
+.subtitle {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+/*    background-color: aqua;*/
+}
+
+.subtitle p {
+    margin-bottom: 0;
+}
+
+.projectTitle {
+/*    background-color: brown;*/
+    display: flex;
+    flex-direction: column;
+}
+
+#WorkExperience h3{
+    margin-bottom: 0;
+}
+
+.projectTitle p, .projectTitle h3 {
+    margin-bottom: 0;
+    margin-right: 0.5em;
+}
+
+.experience:hover{
+    text-shadow: 2px 2px #ebce7c;
+}
+
+.experience ul{
+    text-align: left;
+}
+
+#skillsCards {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-content: center;
+    background-color: aliceblue;
+    text-align: left;
+}
+
+
+footer {
+    background-color: lightgray;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}

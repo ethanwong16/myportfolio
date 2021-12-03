@@ -1,0 +1,152 @@
+body {
+    font-family: Lato, arial, sans-serif;
+}
+
+header {
+    height: 100vh;
+    padding: 1.5em;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-shadow: 3px 3px #ebce7c;
+/*    background-color: blue;*/
+}
+
+header #namepic {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+/*    background-color: red;*/
+}
+
+#namepic #myName {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    max-width: 60%;
+    
+/*    background-color: green;*/
+}
+
+#namepic #myName h1{
+    font-size: 5em;
+}
+
+.gradient {
+    background-image:  linear-gradient(rgba(105,72,3,1) 0%, rgba(191,163,10,1) 42%, rgba(246,219,116,1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+}
+
+#namepic #myPicture {
+    border-radius: 20%;
+    max-width: 30%;
+}
+
+header #clickjump {
+    margin-top: 2.5em;
+}
+
+#clickjump p{
+    font-size: 2em;
+}
+
+.material-icons {
+    background-color: lightgoldenrodyellow;
+}
+
+.material-icons:hover {
+    font-size: 2.5em;
+}
+
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: lightgray;
+    position: sticky;
+    top: 0%;
+    font-size: 1.25em;
+    padding: 0.5em;
+    width: 100%;
+}
+
+nav a:hover {
+    background-color: white;
+}
+
+#AboutMe h2 {
+    text-align: center;
+}
+
+#greeting {
+    font-size: 2em;
+    text-align: center;
+}
+
+#greeting:hover {
+    text-shadow: 3px 3px #ebce7c;
+}
+
+#AboutMe p {
+    font-size: 2em;
+}
+
+section {
+    padding: 1.5em;
+}
+
+.subtitle {
+    display: flex;
+    justify-content: space-between;
+/*    background-color: aqua;*/
+}
+
+.subtitle p {
+    margin-bottom: 0;
+}
+
+.projectTitle {
+/*    background-color: brown;*/
+    display: flex;
+    align-items: flex-end;
+}
+
+#WorkExperience h3{
+    margin-bottom: 0;
+}
+
+.projectTitle p, .projectTitle h3 {
+    margin-bottom: 0;
+    margin-right: 0.5em;
+}
+
+.experience{
+    font-size: 1.25em;
+}
+
+.experience:hover{
+    text-shadow: 2px 2px #ebce7c;
+}
+
+#skillsCards {
+    display: flex;
+    justify-content: space-around;
+    align-content: flex-start;
+    background-color: aliceblue;
+    font-size: 1.25em;
+}
+
+#skillsCards ul:hover {
+    background-color: lightgoldenrodyellow;
+}
+
+
+footer {
+    background-color: lightgray;
+    display: flex;
+    justify-content: space-around;
+}
