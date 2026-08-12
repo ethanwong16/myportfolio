@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ethan Wong — A · Letterpress</title>
+<meta name="description" content="Ethan Wong — bringing products to life.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+
+<link rel="stylesheet" href="shared/tokens.css">
+<link rel="stylesheet" href="shared/page.css">
+
+<style>
+/* ============================================================
+   A — LETTERPRESS
+   Quiet and editorial. Few, large, slow pieces that assemble
+   into big solids sitting behind the name like printing blocks.
+   Gold is rationed: the word "life", the tags, the rules.
+   ============================================================ */
+
+body {
+  font-family: 'Newsreader', Georgia, serif;
+  --hero-pad: clamp(2rem, 6vw, 5.5rem);
+}
+
+/* display face — geometric, heavy, softened */
+.hero__name,
+.nav__mark,
+.band__title,
+.card__title,
+.lede,
+.contact__mail,
+.btn,
+.tag,
+.nav__links,
+.skills__group,
+.card__link,
+.hero__cue,
+.contact__links {
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+.hero__name {
+  --name-weight: 800;
+  --name-track: -0.045em;
+  --name-size: clamp(3.25rem, 16vw, 12rem);
+  text-transform: uppercase;
+  line-height: .84;
+}
+
+/* stacked, like a title page */
+.hero__name span { display: block; }
+
+.hero__tagline {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: clamp(1.15rem, 3.2vw, 1.85rem);
+  font-style: italic;
+  letter-spacing: 0;
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+}
+.life { font-style: italic; font-weight: 500; }
+
+/* a hairline rule above the name, letterpress-ish */
+.hero-inner::before {
+  content: "";
+  display: block;
+  width: clamp(2.5rem, 7vw, 5rem);
+  height: 1px;
+  background: var(--ink-3);
+  margin: 0 auto clamp(1.75rem, 4vw, 2.75rem);
+  opacity: .5;
+}
+.warm .hero-inner::before { background: var(--gold); opacity: 1; }
+
+.hero__blurb {
+  font-size: var(--step-0);
+  line-height: 1.65;
+  max-width: 42ch;
+}
+
+.lede { font-weight: 500; letter-spacing: -.02em; }
+
+/* cards: no fill, just rules — restrained */
+.card {
+  --card-radius: 4px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  padding-inline: 0;
+  border-radius: 0;
+}
+.card:hover { transform: none; box-shadow: none; border-top-color: var(--gold); }
+.cards { gap: 0; }
+.card:last-child { border-bottom: 1px solid var(--line); }
+
+@media (min-width: 820px) {
+  .card {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: 0 2.5rem;   /* columns only — row gaps would split the entry apart */
+    align-items: start;
+  }
+  .card__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .5rem;
+    margin: 0;
+    grid-row: 1 / -1;   /* spans however many rows the entry needs */
+  }
+  .card__title,
+  .card__org,
+  .card__bullets,
+  .card__roles,
+  .card__stack,
+  .card__links { grid-column: 2; }
+}
+
+.band__title { font-weight: 800; text-transform: uppercase; letter-spacing: -.01em; }
+
+.about__text { font-family: 'Newsreader', Georgia, serif; font-size: var(--step-1); }
+.contact__mail { font-weight: 700; }
+</style>
+</head>
+
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a class="nav__mark" href="#top">EW<span>.</span></a>
+  <ul class="nav__links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main id="top">
+
+  <section class="hero" aria-label="Ethan Wong">
+    <canvas class="shards" aria-hidden="true"></canvas>
+    <div class="hero__ring" aria-hidden="true"></div>
+
+    <button class="hero__trigger" type="button">Reveal the page</button>
+
+    <div class="hero-inner">
+      <h1 class="hero__name"><span>Ethan</span><span>Wong</span></h1>
+      <p class="hero__tagline">bringing products to <em class="life">life</em></p>
+      <p class="hero__blurb"></p>
+      <div class="hero__actions"></div>
+    </div>
+
+    <div class="hero__cue hero__cue--tap" aria-hidden="true">
+      <span class="pulse"></span>
+      <span>click anywhere</span>
+    </div>
+    <div class="hero__cue hero__cue--scroll" aria-hidden="true">
+      <span>scroll</span>
+      <span class="hero__cue-line"></span>
+    </div>
+  </section>
+
+  <div class="page" id="page"></div>
+</main>
+
+<script src="shared/content.js"></script>
+<script src="shared/shards.js"></script>
+<script>
+(function () {
+  var C = window.CONTENT;
+
+  document.querySelector('.hero__blurb').textContent = C.blurb;
+  document.querySelector('.hero__actions').innerHTML = C.actions.map(function (a) {
+    return '<a class="btn' + (a.kind === 'primary' ? ' btn--primary' : '') +
+           '" href="' + a.href + '">' + a.label + '</a>';
+  }).join('');
+
+  window.renderPage(document.getElementById('page'));
+
+  window.initHero({
+    seed: 12,
+
+    /* few, large, architectural — set out at the margins so the
+       name keeps the middle of the page to itself */
+    shapes: [
+      { shape: 'slab',   size: 0.26, x: 0.13, y: 0.26, bob: .5 },
+      { shape: 'cube',   size: 0.19, x: 0.87, y: 0.21, bob: 1 },
+      { shape: 'arch',   n: 5, size: 0.22, x: 0.86, y: 0.77, bob: .7 },
+      { shape: 'stairs', n: 3, size: 0.18, x: 0.12, y: 0.79, bob: 1 }
+    ],
+
+    palette: ['#E2C489', '#D3AE64', '#C89457', '#EBD9AE', '#BE9247'],
+
+    scatter:    [0.18, 0.48],
+    startScale: [0.55, 0.95],
+    spin:       1.5,
+    drift:      0.75,
+    corner:     0.10,
+
+    lineWidth:       1.2,
+    stroke:          '#B3ADA1',
+    strokeWarm:      '#A47C2A',
+    strokeAlpha:     0.5,
+    strokeAlphaWarm: 0.3,
+    fillAlpha:       0.75,
+
+    waveMs:     1250,
+    assembleMs: 1150,
+    autoFireMs: 3000
+  });
+
+  /* nav gets a rule once you've left the hero */
+  var nav = document.querySelector('.nav');
+  window.addEventListener('scroll', function () {
+    nav.classList.toggle('is-stuck', window.scrollY > 40);
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+/* ============================================================
+   tokens.css — palette, type scale, rhythm, easing
+   Shared by all three mockups so only the *design* differs.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  color-scheme: light;
+
+  /* --- cold state: flat off-white, before the ripple --- */
+  --paper:     #F2F0EB;
+  --paper-2:   #EAE7E0;
+  --ink:       #1B1A17;
+  --ink-2:     #55524A;
+  --ink-3:     #8B8579;
+  --line:      #DDD9D0;
+
+  /* --- warm accents (constant; they simply go unused while cold) --- */
+  --gold:        #B8841F;
+  --gold-bright: #DDA646;
+  --gold-soft:   #ECD5A2;
+  --gold-wash:   #F7ECD4;
+  --clay:        #B26F3C;
+
+  /* --- ripple: driven per-frame from shards.js --- */
+  --r:  0px;
+  --ox: 50%;
+  --oy: 50%;
+
+  /* --- motion --- */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-io:  cubic-bezier(.65, 0, .35, 1);
+
+  /* --- type scale --- */
+  --step--1: clamp(.8rem,  .77rem + .15vw, .875rem);
+  --step-0:  clamp(1rem,   .96rem + .2vw,  1.125rem);
+  --step-1:  clamp(1.15rem, 1.08rem + .35vw, 1.375rem);
+  --step-2:  clamp(1.5rem, 1.3rem + .9vw,  2.125rem);
+  --step-3:  clamp(2rem,   1.6rem + 2vw,   3rem);
+
+  /* --- rhythm --- */
+  --measure: 64ch;
+  --gutter:  clamp(1.25rem, 5vw, 4rem);
+  --maxw:    1080px;
+  --section: clamp(4.5rem, 10vw, 8rem);
+}
+
+/* --- warm state. `.warm` is the clipped overlay that does the
+       animating; `html.is-warm` is the real content underneath,
+       swapped in un-transitioned the instant the wave completes so
+       the handoff is invisible. Same values, two places. --- */
+html.is-warm,
+.warm {
+  --paper:   #FCF8F0;
+  --paper-2: #F5EDDE;
+  --ink:     #17150F;
+  --ink-2:   #504A3C;
+  --ink-3:   #8C8371;
+  --line:    #E7DCC6;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--paper);
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img { max-width: 100%; display: block; }
+button { font: inherit; color: inherit; }
+
+a { color: inherit; }
+
+::selection { background: var(--gold-soft); color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.u-wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.u-visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

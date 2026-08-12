@@ -1,0 +1,104 @@
+/* ============================================================
+   site.css — the Kinetic direction.
+
+   Energetic. Many small pieces across the whole viewport that
+   swarm inward and lock into built forms — cubes, arches, stacks.
+   The forms stay put afterwards and drift on scroll.
+
+   Loads after tokens.css and page.css, and only overrides what
+   makes this direction itself: type, weight, radius, density.
+   ============================================================ */
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --hero-pad: clamp(1.75rem, 5vw, 4rem);
+  --card-radius: 18px;
+}
+
+.hero__name,
+.nav__mark,
+.band__title,
+.card__title,
+.lede,
+.contact__mail,
+.hero__tagline {
+  font-family: 'Sora', system-ui, sans-serif;
+}
+
+/* --- the name: one line, tight, product-y --- */
+.hero__name {
+  --name-weight: 800;
+  --name-track: -0.055em;
+  --name-size: clamp(2.6rem, 11vw, 8.5rem);
+  line-height: .95;
+}
+.hero__name span { display: inline; }
+.hero__name span + span { margin-left: .12em; }
+
+/* --- the tagline, and the word the ripple comes from --- */
+.hero__tagline {
+  font-size: clamp(1.05rem, 3vw, 1.7rem);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  margin-top: clamp(.85rem, 2vw, 1.35rem);
+}
+.life { font-weight: 800; }
+
+/* a soft halo once it turns gold — it is the epicentre, so it earns it */
+.warm .life::after,
+html.is-warm .life::after {
+  content: "";
+  position: absolute;
+  inset: -.55em -.7em;
+  border-radius: 999px;
+  background: radial-gradient(closest-side, rgba(221,166,70,.20), transparent 72%);
+  z-index: -1;
+}
+
+.hero__blurb { max-width: 44ch; font-size: var(--step-0); }
+
+.hero__actions { gap: .55rem; }
+.btn {
+  border-radius: 12px;
+  letter-spacing: .02em;
+  text-transform: none;
+  font-weight: 600;
+}
+
+/* --- sections --- */
+.band__title { font-weight: 700; letter-spacing: -.035em; }
+.band__num {
+  padding: .3em .6em;
+  border-radius: 8px;
+  background: var(--gold-wash);
+  border: 1px solid var(--gold-soft);
+}
+
+.lede { font-weight: 600; letter-spacing: -.03em; }
+
+/* two-up card grid, filled and rounded */
+@media (min-width: 860px) { .cards { grid-template-columns: 1fr 1fr; } }
+
+.card {
+  --card-bg: color-mix(in srgb, var(--paper-2) 45%, transparent);
+  border-color: transparent;
+  background: var(--card-bg);
+}
+.card:hover {
+  border-color: var(--gold-soft);
+  background: color-mix(in srgb, var(--gold-wash) 55%, transparent);
+}
+.card__title { letter-spacing: -.03em; }
+.tag { border-radius: 8px; font-weight: 600; }
+
+/* skills read as chips here rather than a list */
+.skills__col li {
+  display: inline-block;
+  margin: 0 .35rem .45rem 0;
+  padding: .3em .7em;
+  border-radius: 8px;
+  background: var(--paper-2);
+  font-size: .8rem;
+}
+
+.contact__mail { font-weight: 700; letter-spacing: -.045em; }
