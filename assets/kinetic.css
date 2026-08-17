@@ -1,12 +1,12 @@
 /* ============================================================
-   site.css — the Kinetic direction.
+   kinetic.css — the Kinetic direction's own type, weight, radius
+   and density. Everything structural lives in ripple.css and
+   layout.css; this file only overrides what makes this direction
+   itself, and loads after both.
 
    Energetic. Many small pieces across the whole viewport that
    swarm inward and lock into built forms — cubes, arches, stacks.
    The forms stay put afterwards and drift on scroll.
-
-   Loads after tokens.css and page.css, and only overrides what
-   makes this direction itself: type, weight, radius, density.
    ============================================================ */
 
 body {
