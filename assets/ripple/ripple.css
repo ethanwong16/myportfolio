@@ -1,0 +1,240 @@
+/* ============================================================
+   ripple.css — the hero scaffold: the click-to-reveal moment
+   itself. Pairs with shards.js in this folder; nothing in here
+   is used below the fold.
+
+   Stacking order inside .hero:
+     0  .warm--bg    warm wash, clipped to the expanding circle
+     1  canvas.shards the drifting / assembling pieces
+     2  .hero-inner   the real (cold) text
+     3  .warm--text   a clone of the text styled warm, same clip
+   ============================================================ */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: var(--hero-pad, clamp(2rem, 6vw, 5rem));
+  /* extra room at the foot so the scroll cue never collides with the actions */
+  padding-bottom: calc(var(--hero-pad, clamp(2rem, 6vw, 5rem)) + 4.5rem);
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--paper);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero.is-done { cursor: default; }
+
+.warm {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: circle(var(--r, 0px) at var(--ox, 50%) var(--oy, 50%));
+  will-change: clip-path;
+}
+
+/* the brighter, warmer ground the ripple reveals */
+.warm--bg {
+  z-index: 0;
+  background:
+    radial-gradient(130vmax 130vmax at var(--ox, 50%) var(--oy, 50%),
+      #FFFDF6 0%,
+      #FDF8EC 30%,
+      #F9F1E1 62%,
+      #F5EBDA 100%);
+}
+
+/* must match .hero's box exactly, or the clone lands off-register */
+.warm--text {
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: var(--hero-pad, clamp(2rem, 6vw, 5rem));
+  padding-bottom: calc(var(--hero-pad, clamp(2rem, 6vw, 5rem)) + 4.5rem);
+}
+
+/* a hairline at the wavefront — makes the ripple legible as a wave */
+.hero__ring {
+  position: absolute;
+  z-index: 2;
+  left: var(--ox, 50%);
+  top: var(--oy, 50%);
+  width: calc(var(--r, 0px) * 2);
+  height: calc(var(--r, 0px) * 2);
+  margin-left: calc(var(--r, 0px) * -1);
+  margin-top: calc(var(--r, 0px) * -1);
+  border-radius: 50%;
+  border: 1px solid var(--gold-soft);
+  opacity: calc((1 - var(--rt, 1)) * 0.9);
+  pointer-events: none;
+}
+.hero.is-done .hero__ring { display: none; }
+
+.shards {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--maxw);
+  text-align: center;
+}
+
+/* --- the name --- */
+.hero__name {
+  font-size: var(--name-size, clamp(3rem, 15vw, 11rem));
+  line-height: 0.9;
+  letter-spacing: var(--name-track, -0.03em);
+  font-weight: var(--name-weight, 800);
+  color: var(--ink);
+  margin: 0;
+}
+
+/* --- "bringing products to life" --- */
+.hero__tagline {
+  margin-top: clamp(1rem, 2.5vw, 1.75rem);
+  font-size: var(--step-1);
+  letter-spacing: 0.01em;
+  color: var(--ink-2);
+}
+
+.life {
+  font-weight: 700;
+  color: var(--ink);
+  font-style: normal;
+  position: relative;
+}
+
+/* gold arrives with the wave */
+.warm .life,
+html.is-warm .life {
+  color: var(--gold);
+}
+
+.hero__blurb {
+  margin: clamp(1.5rem, 4vw, 2.5rem) auto 0;
+  max-width: 46ch;
+  color: var(--ink-2);
+  font-size: var(--step-0);
+}
+
+/* --- hero actions --- */
+.hero__actions {
+  margin-top: clamp(1.75rem, 4vw, 2.75rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .7em 1.35em;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-2);
+  font-size: var(--step--1);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .35s var(--ease-out), background-color .35s ease,
+              border-color .35s ease, color .35s ease;
+}
+.btn:hover { transform: translateY(-2px); border-color: var(--ink-3); color: var(--ink); }
+
+.btn--primary { border-color: var(--ink); color: var(--ink); }
+.warm .btn--primary,
+html.is-warm .btn--primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+html.is-warm .btn--primary:hover { background: var(--gold-bright); border-color: var(--gold-bright); }
+
+/* The accessible way in. Off-screen until focused, then it lands
+   as a normal skip-link-style pill. */
+.hero__trigger {
+  position: fixed;
+  left: 50%;
+  top: 1rem;
+  transform: translate(-50%, -200%);
+  z-index: 6;
+  padding: .65em 1.2em;
+  border-radius: 999px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  font-size: var(--step--1);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform .35s var(--ease-out);
+}
+.hero__trigger:focus-visible { transform: translate(-50%, 0); }
+
+/* --- the cue to click, and the scroll cue that replaces it --- */
+.hero__cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.5rem, 4vh, 2.75rem);
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: var(--step--1);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  transition: opacity .5s ease;
+}
+.hero.is-rippling .hero__cue--tap { opacity: 0; }
+
+.hero__cue--scroll {
+  opacity: 0;
+  pointer-events: none;
+}
+.hero.is-done .hero__cue--scroll { opacity: 1; }
+
+.hero__cue-line {
+  width: 1px;
+  height: 2.25rem;
+  background: linear-gradient(to bottom, var(--ink-3), transparent);
+  animation: cue 2.4s var(--ease-io) infinite;
+}
+@keyframes cue {
+  0%, 100% { transform: scaleY(.4); transform-origin: top; opacity: .4; }
+  50%      { transform: scaleY(1);  transform-origin: top; opacity: 1; }
+}
+
+.pulse {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1);   opacity: .45; }
+  50%      { transform: scale(1.6); opacity: 1; }
+}
+
+/* reduced motion: keep the state change, drop the travel.
+   Lives here (rather than only in layout.css) because these three
+   rules are meaningless without the rest of the ripple's motion. */
+@media (prefers-reduced-motion: reduce) {
+  .warm { transition: opacity .4s ease; }
+  .hero__ring { display: none; }
+  .btn:hover { transform: none; }
+}

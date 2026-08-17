@@ -1,192 +1,135 @@
 <!doctype html>
 <html lang="en">
-
-<!--
-WRITTEN BY: Ethan Wong
-EMAIL: wongea2@uci.edu
--->
-
 <head>
-  <meta charset="utf-8">
-  <meta name="author" content="Ethan Wong">
-  <meta name="description" content="Ethan Wong's professional portfolio">
-   <!-- you would link to an external stylesheet here! -->
-  <link rel="stylesheet" href="mobile.css" media="screen and (max-width: 640px)">
-  <link rel="stylesheet" href="tablet.css" media="screen and (min-width: 640px) and (max-width: 1024px)">
-  <link rel="stylesheet" href="desktop.css" media="screen and (min-width: 1024px)">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato&family=Roboto&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-   <!-- you would also link to Bootstrap here! -->
-  <title>Ethan Wong's Portfolio</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Ethan Wong — bringing products to life</title>
+<meta name="author" content="Ethan Wong">
+<meta name="description" content="Ethan Wong — product builder who ships end-to-end and builds with AI natively. Currently on Growth Platform &amp; AI Search at Zillow.">
+<meta name="theme-color" content="#FCF8F0">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ethan Wong — bringing products to life">
+<meta property="og:description" content="Product builder who ships end-to-end and builds with AI natively. Currently on Growth Platform &amp; AI Search at Zillow.">
+<meta name="twitter:card" content="summary">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23FCF8F0'/%3E%3Cpath d='M16 6l9 5v10l-9 5-9-5V11z' fill='%23DDA646'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/ripple/ripple.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/kinetic.css">
 </head>
-    
+
 <body>
-    
-  <header>
-      <div id="namepic">
-          <div id="myName"><h1 class="gradient">Ethan Wong</h1></div>
-          <img id="myPicture" src="profile_picture.jpg" alt="Headshot of Ethan Wong">
-      </div>
-      
-      <div id="clickjump">
-          <a href="#0"><span class="material-icons">expand_more</span></a>
-          <p>Explore My Portfolio</p>
-      </div>
-  </header>
 
-  <nav>
-      <a href="#0">About Me</a>
-      <a href="#1">Work Experience</a>
-      <a href="#2">Projects</a>
-      <a href="#3">Skills</a>
-  </nav>
-    
-  <hr id="0">
-    
-  <section id="AboutMe">
-      <h2>About Me</h2>
-      
-      <p class="gradient" id="greeting"> ~ Hello world ~</p><p> I'm Ethan, an avid fan of the product development life cycle and an aspiring product manager.  I'm currently in my third year studying Computer Science at the University of California, Irvine.  Thank you for visiting my portfolio / resume!</p>
+<nav class="nav" aria-label="Primary">
+  <a class="nav__mark" href="#top">Ethan Wong<span>.</span></a>
+  <ul class="nav__links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main id="top">
+
+  <section class="hero" aria-label="Ethan Wong">
+    <canvas class="shards" aria-hidden="true"></canvas>
+    <div class="hero__ring" aria-hidden="true"></div>
+    <button class="hero__trigger" type="button">Reveal the page</button>
+
+    <div class="hero-inner">
+      <h1 class="hero__name"><span>Ethan</span><span>Wong</span></h1>
+      <p class="hero__tagline">bringing products to <em class="life">life</em></p>
+      <p class="hero__blurb"></p>
+      <div class="hero__actions"></div>
+    </div>
+
+    <div class="hero__cue hero__cue--tap" aria-hidden="true">
+      <span class="pulse"></span>
+      <span>click anywhere</span>
+    </div>
+    <div class="hero__cue hero__cue--scroll" aria-hidden="true">
+      <span>scroll</span>
+      <span class="hero__cue-line"></span>
+    </div>
   </section>
-    
-  <hr id="1">
 
-  <section id="WorkExperience">
-      <h2> Work Experience </h2>
-    
-      <div class="experience">
-          <h3> Software Engineering Intern </h3>
-          <div class="subtitle">
-              <p>Medtronic</p>
-              <p>June 2021 - August 2021</p>
-          </div>
-          <ul>
-              <li>Implemented APIs for key features of diabetes patient analytics dashboard</li>
-              <li>Performed data filtering + analysis on over 14K records using Python Pandas + Numpy</li>
-              <li>Deployed API into AWS serverless compute architecture + configured connection to S3 buckets</li>
-              <li>Automated Excel workbook data validation + designed JIRA Xray unit tests</li>
-          </ul>
-      </div>
-      
-      <div class="experience">
-          <h3> Project Management Intern </h3>
-          <div class="subtitle">
-              <p>Federal Student Aid</p>
-              <p>Sep 2020 - May 2021</p>
-          </div>
-          <ul>
-              <li>Led cohort of software development, UI/UX, and policy research interns in Federal Student Aid website redesign project</li>
-              <li>Facilitated continuous cross-functional collaboration and communication throughout user research, interface mock-up, and implementation phases</li>
-              <li>Defined key project requirements + designed reference wireframes</li>
-          </ul>
-      </div>
-      
-      <div class="experience">
-          <h3> Technology Analyst Intern </h3>
-          <div class="subtitle">
-              <p>MENTOR Global Consultants</p>
-              <p>Jul 2019 - Oct 2019</p>
-          </div>
-          <ul>
-              <li>Researched applications for blockchain technology in simplifying bond distribution processes</li>
-              <li>Created white paper proposal, promotional brochures, and slide deck to attract investors for blockchain-supported micro municipal bond issuance platform</li>
-          </ul>
-      </div>
-  </section>
-    
-  <hr id=2>
-    
-  <section id="Projects">
-      <h2> Projects </h2>
-      
-      <div class="experience">
-          <div class="projectTitle">
-              <h3> ZotRides</h3>
-              <p>full-stack, car rental web application</p>
-          </div>
-          <div class="subtitle">
-              <p>Tools: React.js, jQuery, Tomcat, Java, Android Studio, mySQL</p>
-              <p><a href="https://github.com/ethanwong16/ZotRides" target="_blank">GitHub Repo</a></p>
-          </div>
-          <ul>
-              <li>Designed relational schema / stored procedures + utilized XML parsing with data insertion optimizations to generate mySQL database storing over 120K rental car records / relationships</li>
-              <li>Deployed web application with load balancers + master-slave servers using AWS EC2 + Google Compute Enginem</li>
-              <li>Improved web application security via password encryption, HTTPS redirection, and reCAPTCHA validation</li>
-              <li>Implemented full-text search, autocomplete, keyword search, and session cookies to enhance web app usability</li>
-          </ul>
-      </div>
+  <div class="page" id="page"></div>
+</main>
 
-      <div class="experience">
-          <div class="projectTitle">
-              <h3> Project TakeTheStage</h3>
-              <p> operational research + CSR marketing campaign</p>
-          </div>
-          <div class="subtitle">
-            <p>Tools: Microsoft Excel, Adobe Suite, Hootsuite</p>
-            <p><a href="https://drive.google.com/file/d/1tY7sdmoFYS0dzQQQ1jbVA4jrUlRYS7Nh/view?usp=sharing" target="_blank">Project Proposal PDF</a></p>
-          </div>
-          <ul>
-              <li>Developed and pitched corporate social responsibility + marketing campaign for local theater</li>
-              <li>Conducted research study on operational procedures, public perception, community impact efforts, digital media presence, and target market</li>
-              <li>Analyzed research findings to deduce actionable insights + formulate CSR campaign</li>
-          </ul>
-      </div>
+<script src="assets/content.js"></script>
+<script src="assets/render.js"></script>
+<script src="assets/ripple/shards.js"></script>
+<script>
+(function () {
+  var C = window.CONTENT;
 
-      <div class="experience">
-          <div class="projectTitle">
-              <h3> xPlora</h3>
-              <p> interactive prototye, design industry exploration tool</p>
-          </div>
-          <div class="subtitle">
-              <p>Tools: Adobe XD, Adobe Illustrator</p>
-              <p><a href="https://xd.adobe.com/view/8eb4e990-8a0b-4e0c-b55e-046b39641113-dbe7/" target="_blank">Adobe XD Interactive Prototype</a></p>
-          </div>
-          <ul>
-              <li>Designed high-fidelity prototype for xPlora, a web application to help prospective designers learn more about career paths, news, and tools for success in the design industry</li>
-          </ul>
-      </div>
-  </section>
-    
-  <hr id="3">
-  
-  <section id="Skills">
-      <h2> Skills </h2>
-      <div id="skillsCards">
-          <ul>
-              <li>Python</li>
-              <li>Java</li>
-              <li>C</li>
-              <li>C++</li>
-              <li>SQL</li>
-              <li>Swift</li>
-              <li>Android Studio</li>
-          </ul>
+  document.querySelector('.hero__blurb').textContent = C.blurb;
+  document.querySelector('.hero__actions').innerHTML = C.actions.map(function (a) {
+    var ext = /^https?:|\.pdf$/i.test(a.href);
+    return '<a class="btn' + (a.kind === 'primary' ? ' btn--primary' : '') +
+           '" href="' + a.href + '"' +
+           (ext ? ' target="_blank" rel="noopener"' : '') + '>' + a.label + '</a>';
+  }).join('');
 
-          <ul>
-              <li>Adobe Photoshop</li>
-              <li>Adobe XD</li>
-              <li>Adobe Illustrator</li>
-              <li>InVision</li>
-              <li>Figma</li>
-          </ul>
+  window.renderPage(document.getElementById('page'));
 
-          <ul>
-              <li>JIRA</li>
-              <li>Confluence</li>
-              <li>Bit Bucket</li>
-              <li>Git</li>
-              <li>Xray</li>
-              <li>AGILE / SCRUM techniques</li>
-          </ul>
-      </div>
-  </section>
-  
-  <footer>
-      <p>Created by Ethan Wong</p>
-      <p><a href="mailto:ewong0116@gmail.com">ewong0116@gmail.com</a></p>
-      <p><a href="https://www.linkedin.com/in/ethanawong/" target="_blank">LinkedIn</a></p>
-  </footer>
-    
+  window.initHero({
+    seed: 29,
+
+    /* many small forms ringing the viewport — the middle stays clear
+       for the name, but the edges are busy and alive.
+       narrow:false = dropped on phones, where there is no margin to spare */
+    shapes: [
+      { shape: 'cube',   size: 0.115, x: 0.09, y: 0.16 },
+      { shape: 'stairs', n: 4, size: 0.13,  x: 0.24, y: 0.14,  narrow: false },
+      { shape: 'tri',    size: 0.10,  x: 0.50, y: 0.15,  narrow: false },
+      { shape: 'bars',   n: 5, size: 0.14,  x: 0.76, y: 0.145, narrow: false },
+      { shape: 'cube',   size: 0.125, x: 0.92, y: 0.22 },
+      { shape: 'arch',   n: 5, size: 0.145, x: 0.90, y: 0.62 },
+      { shape: 'tri',    size: 0.095, x: 0.955, y: 0.87, narrow: false },
+      { shape: 'stairs', n: 4, size: 0.135, x: 0.72, y: 0.93 },
+      { shape: 'bars',   n: 5, size: 0.13,  x: 0.27, y: 0.94 },
+      { shape: 'arch',   n: 5, size: 0.13,  x: 0.07, y: 0.75, narrow: false },
+      { shape: 'cube',   size: 0.10,  x: 0.045, y: 0.45, narrow: false }
+    ],
+
+    palette: [
+      '#DDA646', '#C98A3A', '#B26F3C', '#E8C888',
+      '#A9832F', '#D2A04A', '#C4653A', '#EBD9AE'
+    ],
+
+    scatter:    [0.28, 0.75],
+    startScale: [0.35, 0.9],
+    spin:       3.4,
+    drift:      1.5,
+    corner:     0.05,
+
+    lineWidth:       1,
+    stroke:          '#B9B3A6',
+    strokeWarm:      '#B0862E',
+    strokeAlpha:     0.6,
+    strokeAlphaWarm: 0.3,
+    fillAlpha:       0.95,
+
+    waveMs:     950,
+    assembleMs: 780,
+    parallax:   0.14,
+    autoFireMs: 3000
+  });
+
+  var nav = document.querySelector('.nav');
+  window.addEventListener('scroll', function () {
+    nav.classList.toggle('is-stuck', window.scrollY > 40);
+  }, { passive: true });
+})();
+</script>
 </body>
-    
 </html>
