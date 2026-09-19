@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Case study — Ethan Wong</title>
+<meta name="author" content="Ethan Wong">
+<meta name="theme-color" content="#FCF8F0">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23FCF8F0'/%3E%3Cpath d='M16 6l9 5v10l-9 5-9-5V11z' fill='%23DDA646'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/case-study.css">
+
+<style>
+  /* case studies open in the warm palette by default — there is
+     no cold/ripple state on this page */
+  html { background: #FCF8F0; }
+</style>
+</head>
+
+<body class="cs is-warm">
+
+<nav class="cs-nav" aria-label="Primary">
+  <a class="cs-nav__back" href="../index.html#work">&#8592; Back to work</a>
+  <a class="cs-nav__mark" href="../index.html">Ethan Wong<span>.</span></a>
+</nav>
+
+<main id="page"></main>
+
+<script src="../assets/case-study-sample-content.js"></script>
+<script src="../assets/case-study-render.js"></script>
+<script>window.renderCaseStudy(document.getElementById('page'));</script>
+</body>
+</html>

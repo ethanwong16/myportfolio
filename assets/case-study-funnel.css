@@ -1,0 +1,237 @@
+/* ============================================================
+   case-study-funnel.css — the decision-funnel component.
+
+   Drops into a case study via a section with `funnel: '<key>'`.
+   Everything is namespaced csf- so it cannot collide with
+   case-study.css. Depends on tokens.css for the palette only.
+
+   The stage ramp below is a validated single-hue sequential scale
+   (dataviz validate_palette.js, light mode, surface #FCF8F0):
+   monotone lightness, >=0.06 dL steps, light end clears the paper
+   at 2.10:1, hue spread 13deg. It encodes STAGE DEPTH — diffuse
+   need to committed decision — not thread identity. Threads never
+   share a row and are always directly labelled, so colour does no
+   identity work and the brand stays single-accent.
+   ============================================================ */
+
+.csf {
+  --s1: #D0A85C; --s2: #BE8F3A; --s3: #AC7823; --s4: #946115; --s5: #74490B;
+  --csf-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  margin-block: clamp(1.5rem, 4vw, 2.5rem);
+  /* Required. As a grid item inside .cs-sections, min-width:auto makes
+     this honour the 1180px min-width of .csf-stagewrap deep inside, so
+     the item blows out past the reading column and the whole page
+     scrolls sideways. min-width:0 lets it shrink and scroll internally. */
+  min-width: 0;
+}
+
+/* ---- controls ---- */
+.csf-ctl { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .9rem; }
+.csf-btn {
+  font: inherit; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
+  padding: .5em 1em; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--ink-2);
+  transition: border-color .25s ease, color .25s ease, background-color .25s ease;
+}
+.csf-btn:hover { border-color: var(--gold); color: var(--ink); background: var(--gold-wash); }
+.csf-btn[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-wash); color: #5E3B08; font-weight: 600; }
+.csf-hint { font-size: .72rem; color: var(--ink-3); }
+
+/* ---- scroll shell. min-width sits on the mount, not the svg:
+   the svg is a grandchild, so a direct-child selector silently
+   does nothing and the diagram shrinks instead of scrolling ---- */
+.csf-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; padding-bottom: .5rem; }
+.csf-scroll > .csf-stagewrap { min-width: 1180px; }
+.csf-svg { display: block; width: 100%; height: auto; }
+.csf-scrollhint { display: none; font-size: .7rem; color: var(--ink-3); margin-bottom: .4rem; }
+@media (max-width: 1100px) { .csf-scrollhint { display: block; } }
+
+/* ---- nodes. foreignObject clips hard at its bounds, so a 1px
+   border on a box sized exactly to it loses an edge once the svg
+   scales by a fractional factor — hence 2px of slack ---- */
+.csf-pad { padding: 2px; box-sizing: border-box; height: 100%; }
+.csf-node {
+  height: 100%; box-sizing: border-box; border-radius: 10px; padding: 8px 11px;
+  display: flex; flex-direction: column; justify-content: center; gap: 3px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--paper); border: 1px solid var(--line);
+}
+.csf-node .t { font-size: 13px; line-height: 1.28; font-weight: 600; letter-spacing: -.01em; color: var(--ink); }
+.csf-node .s { font-size: 10.5px; line-height: 1.35; color: var(--ink-3); }
+.csf-node--cat .t { font-family: 'Sora', system-ui, sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+/* the only filled nodes on the board: what actually shipped */
+.csf-node--dec { background: var(--gold-wash); border-color: var(--gold); }
+.csf-node--dec .t { color: #5E3B08; }
+.csf-node--dec .s { color: #7C540F; }
+
+/* the winner is marked by border + tick, not fill — the gold ribbon
+   leaving it is what really identifies it */
+.csf-chip {
+  height: 100%; box-sizing: border-box; border-radius: 7px; padding: 0 9px;
+  display: flex; align-items: center; font-size: 11px; line-height: 1.2;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  border: 1px solid var(--line); background: var(--paper); color: var(--ink-3);
+}
+.csf-chip--won { border-color: var(--gold); color: var(--ink); font-weight: 600; }
+
+.csf-sthead {
+  display: flex; align-items: center; gap: .4rem; white-space: nowrap;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+}
+.csf-sthead i { font-style: normal; font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 700; }
+
+/* ---- focus + hover ---- */
+.csf-hit { fill: transparent; cursor: pointer; }
+.csf-stage { transition: opacity .3s ease, transform .3s var(--ease-out); transform-box: fill-box; transform-origin: center; }
+.csf-svg[data-focus] .csf-stage { opacity: .32; }
+.csf-svg[data-focus="0"] .csf-stage[data-stage="0"], .csf-svg[data-focus="1"] .csf-stage[data-stage="1"],
+.csf-svg[data-focus="2"] .csf-stage[data-stage="2"], .csf-svg[data-focus="3"] .csf-stage[data-stage="3"],
+.csf-svg[data-focus="4"] .csf-stage[data-stage="4"] { opacity: 1; }
+.csf-svg[data-focus] .csf-ribbons { opacity: .28; transition: opacity .3s ease; }
+
+.csf-lane { fill: var(--paper-2); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+.csf-svg[data-hover="0"] .csf-lane[data-stage="0"], .csf-svg[data-hover="1"] .csf-lane[data-stage="1"],
+.csf-svg[data-hover="2"] .csf-lane[data-stage="2"], .csf-svg[data-hover="3"] .csf-lane[data-stage="3"],
+.csf-svg[data-hover="4"] .csf-lane[data-stage="4"] { opacity: .8; }
+/* the lane stays lit for as long as you are inside the detail view */
+.csf-svg[data-focus="0"] .csf-lane[data-stage="0"], .csf-svg[data-focus="1"] .csf-lane[data-stage="1"],
+.csf-svg[data-focus="2"] .csf-lane[data-stage="2"], .csf-svg[data-focus="3"] .csf-lane[data-stage="3"],
+.csf-svg[data-focus="4"] .csf-lane[data-stage="4"] { opacity: 1; fill: var(--gold-wash); }
+.csf-svg[data-hover="0"] .csf-stage[data-stage="0"], .csf-svg[data-hover="1"] .csf-stage[data-stage="1"],
+.csf-svg[data-hover="2"] .csf-stage[data-stage="2"], .csf-svg[data-hover="3"] .csf-stage[data-stage="3"],
+.csf-svg[data-hover="4"] .csf-stage[data-stage="4"] { transform: scale(1.018); opacity: 1; }
+
+foreignObject.is-lit .csf-node, foreignObject.is-lit .csf-chip {
+  border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft);
+}
+
+/* ============================================================
+   DETAIL PANEL — opens beside the column you clicked
+   ============================================================ */
+.csf-stagewrap { position: relative; }
+.csf-panel {
+  position: absolute; z-index: 6; display: flex; flex-direction: column;
+  overflow-y: auto; overscroll-behavior: contain;
+  padding: 1rem 1.1rem; border-radius: 16px;
+  border: 1px solid var(--gold-soft);
+  background: color-mix(in srgb, var(--paper) 97%, transparent);
+  box-shadow: 0 30px 70px -46px rgba(90, 60, 10, .6);
+  animation: csf-pop .28s var(--ease-out) both;
+}
+@keyframes csf-pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.csf-panel__head { display: flex; align-items: baseline; gap: .55rem; padding-bottom: .6rem; border-bottom: 1px solid var(--line); }
+.csf-panel__num { font-size: .62rem; font-weight: 700; letter-spacing: .14em; color: var(--gold); }
+.csf-panel__title { font-family: 'Sora', system-ui, sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: -.02em; }
+.csf-panel__x {
+  margin-left: auto; font: inherit; font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+  background: none; border: 0; color: var(--ink-3); cursor: pointer;
+}
+.csf-panel__x:hover { color: var(--gold); }
+
+.csf-body { display: grid; gap: .7rem; padding-top: .8rem; }
+.csf-item { border-radius: 12px; border: 1px solid var(--line); background: var(--paper); transition: border-color .2s ease, box-shadow .2s ease; }
+.csf-item.is-lit { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
+.csf-ico { width: 1em; height: 1em; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.csf-body ul, .csf-body ol { margin: 0; padding: 0; list-style: none; }
+
+/* ---- 01 user needs: persona-led, quote forward ---- */
+.csf-user { display: grid; grid-template-columns: auto 1fr; gap: .9rem; padding: .95rem 1.05rem; }
+.csf-user__ico {
+  width: 2.2rem; height: 2.2rem; border-radius: 50%; display: grid; place-items: center; font-size: 1.15rem;
+  color: var(--gold); background: var(--gold-wash); border: 1px solid var(--gold-soft);
+}
+.csf-user__need { font-size: .9rem; font-weight: 700; letter-spacing: -.015em; line-height: 1.35; margin-bottom: .5rem; }
+.csf-user__quote {
+  margin: 0; padding-left: .8rem; border-left: 2px solid var(--gold-soft);
+  font-size: .8rem; line-height: 1.65; color: var(--ink-2); font-style: italic;
+}
+.csf-user__who { display: block; margin-top: .45rem; font-style: normal; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+
+/* ---- 02 bot needs: spec sheet / pipeline ---- */
+.csf-pipe { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; padding: .6rem .7rem;
+  border: 1px dashed var(--line); border-radius: 10px; background: var(--paper-2); }
+.csf-pipe__step { font-family: var(--csf-mono); font-size: .62rem; letter-spacing: .06em; text-transform: uppercase;
+  padding: .3em .6em; border-radius: 5px; background: var(--paper); border: 1px solid var(--line); color: var(--ink-2); }
+.csf-pipe__arrow { color: var(--gold); font-size: .7rem; }
+.csf-bot { padding: .85rem 1rem; }
+.csf-bot__name { display: flex; align-items: flex-start; gap: .5rem; font-family: var(--csf-mono);
+  font-size: .78rem; font-weight: 600; line-height: 1.4; color: var(--ink); margin-bottom: .55rem; }
+.csf-bot__name::before { content: "\25B8"; color: var(--gold); flex: none; }
+.csf-bot__pts { display: grid; gap: .35rem; }
+.csf-bot__pts li { position: relative; padding-left: 1rem; font-size: .76rem; line-height: 1.6; color: var(--ink-2); }
+.csf-bot__pts li::before { content: ""; position: absolute; left: 0; top: .62em; width: .4rem; height: 1px; background: var(--gold); }
+
+/* ---- 03 categories: four pillars ---- */
+.csf-pillar { display: grid; grid-template-columns: 3px 1fr; gap: .9rem; padding: 0; overflow: hidden; }
+.csf-pillar__bar { background: linear-gradient(180deg, var(--s2), var(--s5)); }
+.csf-pillar__in { padding: .85rem 1rem .95rem 0; }
+.csf-pillar__name { font-family: 'Sora', system-ui, sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: -.025em; }
+.csf-pillar__def { font-size: .76rem; color: var(--ink-3); margin-top: .1rem; margin-bottom: .6rem; }
+.csf-pillar__subs { display: grid; gap: .3rem; margin-bottom: .65rem; }
+.csf-pillar__sub { display: grid; grid-template-columns: auto 1fr; gap: .5rem; align-items: baseline; }
+.csf-pillar__k { font-size: .64rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold);
+  background: var(--gold-wash); border: 1px solid var(--gold-soft); padding: .2em .5em; border-radius: 5px; white-space: nowrap; }
+.csf-pillar__v { font-size: .74rem; line-height: 1.5; color: var(--ink-2); }
+.csf-pillar__cov { border-top: 1px dashed var(--line); padding-top: .55rem; }
+.csf-pillar__covlab { font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: .3rem; }
+.csf-pillar__cov li { position: relative; padding-left: 1.1rem; font-size: .73rem; line-height: 1.55; color: var(--ink-2); }
+.csf-pillar__cov li::before { content: "\2713"; position: absolute; left: 0; top: 0; color: var(--gold); font-size: .7rem; }
+
+/* two-up once there is room — the 03 panel is the narrowest, since
+   it opens against the middle column */
+@media (min-width: 1400px) {
+  .csf-body--pillars { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---- 04 options: bullets, quiet heading ---- */
+.csf-opt { padding: .85rem 1rem; }
+.csf-opt__thread { font-size: .62rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--gold); margin-bottom: .55rem; }
+.csf-og { margin-bottom: .7rem; }
+.csf-og:last-of-type { margin-bottom: 0; }
+.csf-og__head { font-size: .76rem; line-height: 1.55; color: var(--ink); font-weight: 500; margin-bottom: .35rem; }
+.csf-og__b { display: grid; gap: .28rem; margin-bottom: .4rem; }
+.csf-og__b li { position: relative; padding-left: 1rem; font-size: .73rem; line-height: 1.55; color: var(--ink-2); }
+.csf-og__b li::before { content: ""; position: absolute; left: 0; top: .6em; width: .4rem; height: 1px; background: var(--ink-3); }
+.csf-og__sub { display: grid; gap: .35rem; margin-top: .3rem; }
+.csf-og__subrow { padding: .45rem .6rem; border-radius: 8px; background: var(--paper-2); }
+.csf-og__subk { font-size: .68rem; font-weight: 700; color: var(--ink); display: block; margin-bottom: .15rem; }
+.csf-og__subv { font-size: .72rem; line-height: 1.55; color: var(--ink-2); }
+.csf-opt__pills { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .7rem; padding-top: .6rem; border-top: 1px dashed var(--line); }
+.csf-opt__pill { font-size: .68rem; padding: .3em .7em; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-3); background: var(--paper); }
+.csf-opt__pill.won { border-color: var(--gold); background: var(--gold-wash); color: #5E3B08; font-weight: 600; }
+
+/* ---- 05 decisions: the payoff, strongest treatment ---- */
+.csf-dec { border: 1px solid var(--gold); border-radius: 14px; overflow: hidden; background: var(--paper); }
+.csf-dec__top {
+  display: flex; align-items: center; gap: .6rem; padding: .7rem .95rem;
+  background: linear-gradient(90deg, var(--gold-wash), color-mix(in srgb, var(--gold-soft) 55%, transparent));
+  border-bottom: 1px solid var(--gold-soft);
+}
+.csf-dec__ico { width: 1.7rem; height: 1.7rem; border-radius: 8px; display: grid; place-items: center;
+  background: var(--paper); border: 1px solid var(--gold); color: var(--gold); font-size: .95rem; flex: none; }
+.csf-dec__name { font-family: 'Sora', system-ui, sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: -.025em; color: #5E3B08; }
+.csf-dec__thread { margin-left: auto; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: #7C540F; }
+.csf-dec__in { padding: .8rem .95rem; display: grid; gap: .75rem; }
+.csf-dg__head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; margin-bottom: .4rem; }
+.csf-dg__k { font-size: .58rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.csf-dg__v { font-size: .85rem; font-weight: 700; letter-spacing: -.015em; color: var(--ink); }
+.csf-dg__proof { display: grid; gap: .3rem; }
+.csf-dg__proof li { position: relative; padding-left: 1.15rem; font-size: .74rem; line-height: 1.55; color: var(--ink-2); }
+.csf-dg__proof li::before { content: "\2713"; position: absolute; left: 0; top: -.05em; color: var(--gold); font-size: .72rem; font-weight: 700; }
+.csf-di { margin-top: .5rem; padding: .5rem .65rem; border-radius: 8px; background: var(--paper-2); }
+.csf-di__t { font-size: .74rem; font-weight: 700; color: var(--ink); margin-bottom: .25rem; }
+.csf-di__b li { position: relative; padding-left: 1rem; font-size: .72rem; line-height: 1.55; color: var(--ink-2); }
+.csf-di__b li::before { content: ""; position: absolute; left: 0; top: .6em; width: .4rem; height: 1px; background: var(--gold); }
+
+/* ---- show-all, stacked below the funnel ---- */
+.csf-all { display: grid; gap: 1rem; margin-top: 1.25rem; }
+.csf-allpanel { border: 1px solid var(--gold-soft); border-radius: 14px;
+  background: color-mix(in srgb, var(--paper-2) 45%, transparent); padding: clamp(1rem, 2.5vw, 1.5rem); }
+.csf-allpanel__head { display: flex; align-items: baseline; gap: .7rem; margin-bottom: .25rem; }
+.csf-allpanel__num { font-size: .68rem; font-weight: 700; letter-spacing: .14em; color: var(--gold); }
+.csf-allpanel__title { font-family: 'Sora', system-ui, sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: -.02em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .csf-stage, .csf-lane, .csf-panel, .csf-item { transition: none; animation: none; }
+}

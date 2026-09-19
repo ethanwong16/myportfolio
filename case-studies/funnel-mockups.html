@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structured markup funnel — mockups</title>
+<meta name="theme-color" content="#FCF8F0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+
+<link rel="stylesheet" href="../assets/tokens.css">
+
+<style>
+/* ============================================================
+   Mockup harness. The stage ramp below is a validated single-hue
+   sequential scale (validate_palette.js, light mode, surface
+   #FCF8F0): monotone lightness, >=0.06 dL steps, light end clears
+   the paper at 2.10:1, hue spread 13deg.
+
+   It encodes STAGE DEPTH (diffuse need -> committed decision),
+   not thread identity. The four threads never share a row and are
+   always directly labelled, so colour does no identity work and
+   the brand stays single-accent.
+   ============================================================ */
+:root {
+  --s1: #D0A85C;
+  --s2: #BE8F3A;
+  --s3: #AC7823;
+  --s4: #946115;
+  --s5: #74490B;
+}
+
+/* The warm (post-ripple) palette. These must sit on :root, not body —
+   tokens.css defines the *cold* values there, so an html-level
+   background would otherwise resolve to cold grey behind a warm body. */
+:root {
+  --paper:   #FCF8F0;
+  --paper-2: #F5EDDE;
+  --ink:     #17150F;
+  --ink-2:   #504A3C;
+  --ink-3:   #8C8371;
+  --line:    #E7DCC6;
+}
+
+html { background: var(--paper); }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+h1, h2, h3, .u-mono { font-family: 'Sora', system-ui, sans-serif; }
+
+.wrap { width: 100%; max-width: 1400px; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 3rem); }
+
+.page-head { padding-block: clamp(2.5rem, 6vw, 4rem) clamp(1.5rem, 3vw, 2rem); }
+.page-head h1 { font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.page-head p { margin-top: .9rem; color: var(--ink-2); max-width: 62ch; line-height: 1.6; }
+
+.opt { padding-block: clamp(2.5rem, 6vw, 4rem); border-top: 1px solid var(--line); }
+.opt__head { display: flex; align-items: baseline; gap: .9rem; margin-bottom: .5rem; }
+.opt__num {
+  font-size: .7rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold); padding: .3em .6em; border-radius: 6px;
+  background: var(--gold-wash); border: 1px solid var(--gold-soft);
+}
+.opt__head h2 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-weight: 700; letter-spacing: -.025em; }
+.opt__note { color: var(--ink-2); font-size: .9rem; line-height: 1.6; max-width: 68ch; margin-bottom: 2rem; }
+.opt__note b { color: var(--ink); font-weight: 600; }
+
+/* ---- shared atoms ---------------------------------------- */
+.stage-label {
+  font-size: .62rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--ink-3); display: flex; align-items: center; gap: .45rem;
+}
+.stage-label i {
+  font-style: normal; font-variant-numeric: tabular-nums;
+  color: var(--gold); font-weight: 700;
+}
+
+.eg { color: var(--ink-3); font-style: italic; }
+.strike { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--ink-3) 60%, transparent); }
+
+/* ============================================================
+   OPTION 1 — flow funnel (SVG ribbons)
+   ============================================================ */
+.flow { width: 100%; height: auto; display: block; overflow: visible; }
+.flow .ribbon { transition: opacity .3s ease; }
+.flow .node-card {
+  height: 100%; box-sizing: border-box;
+  border-radius: 10px; padding: 10px 12px;
+  display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+.flow .node-card .t { font-size: 13px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; color: var(--ink); }
+.flow .node-card .s { font-size: 11px; line-height: 1.35; color: var(--ink-3); }
+.flow .node-card.is-cat {
+  background: var(--paper-2); border-color: var(--gold-soft);
+  align-items: flex-start;
+}
+.flow .node-card.is-cat .t { font-family: 'Sora', system-ui, sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+.flow .node-card.is-alt { background: transparent; border-style: dashed; }
+.flow .node-card.is-alt .s { font-size: 11px; line-height: 1.5; }
+.flow .node-card.is-dec { background: var(--gold-wash); border-color: var(--gold); }
+.flow .node-card.is-dec .t { color: #5E3B08; }
+.flow .node-card.is-dec .s { color: #7C540F; }
+
+/* ============================================================
+   OPTION 2 — decision tracks (CSS swimlanes)
+   ============================================================ */
+.tracks { display: grid; gap: 10px; }
+.tracks__head {
+  display: grid; grid-template-columns: var(--cols); gap: 10px;
+  padding-bottom: .6rem;
+}
+.track {
+  display: grid; grid-template-columns: var(--cols); gap: 10px;
+  position: relative; align-items: stretch;
+  padding: 10px; border-radius: 14px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--paper-2) 70%, transparent) 60%, color-mix(in srgb, var(--gold-wash) 80%, transparent));
+}
+.cell {
+  border-radius: 10px; padding: .8rem .9rem;
+  display: flex; flex-direction: column; justify-content: center; gap: .3rem;
+  border: 1px solid var(--line); background: var(--paper);
+  min-height: 92px;
+}
+.cell .t { font-size: .875rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.3; }
+.cell .s { font-size: .75rem; color: var(--ink-3); line-height: 1.45; }
+.cell--cat {
+  background: var(--paper-2); border-color: var(--gold-soft);
+}
+.cell--cat .t { font-family: 'Sora', system-ui, sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: -.025em; }
+.cell--alt { border-style: dashed; background: transparent; }
+.cell--alt .s { line-height: 1.6; }
+.cell--dec { background: var(--gold-wash); border-color: var(--gold); }
+.cell--dec .t { color: #5E3B08; }
+.cell--dec .s { color: #7C540F; }
+
+/* the chevrons between columns, drawn in the gaps */
+.track::after { content: none; }
+.chev { position: relative; }
+.chev::after {
+  content: "";
+  position: absolute; right: -9px; top: 50%;
+  width: 8px; height: 8px;
+  border-top: 1.5px solid var(--gold-soft);
+  border-right: 1.5px solid var(--gold-soft);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+@media (max-width: 900px) {
+  .tracks__head { display: none; }
+  .track { grid-template-columns: 1fr; }
+  .chev::after { display: none; }
+}
+
+/* ============================================================
+   OPTION 3 — funnel silhouette (narrowing wedge)
+   ============================================================ */
+.wedge-wrap { position: relative; }
+/* stage labels live on their own fixed row — inside the columns they
+   ride the vertical centring and read as misalignment */
+.wedge-head {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(.5rem, 1.4vw, 1rem);
+  margin-bottom: 1rem;
+}
+.wedge-body { position: relative; }
+/* the silhouette is measured from the laid-out columns, not guessed */
+.wedge-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; overflow: visible; }
+.wedge-grid {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(.5rem, 1.4vw, 1rem);
+  align-items: center;
+}
+.wcol { display: grid; gap: .6rem; align-content: center; }
+.wcard {
+  border-radius: 10px; padding: .7rem .8rem;
+  border: 1px solid var(--line); background: var(--paper);
+  display: grid; gap: .25rem;
+}
+.wcard .t { font-size: .8rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.3; }
+.wcard .s { font-size: .7rem; color: var(--ink-3); line-height: 1.4; }
+.wcard--cat { background: var(--paper-2); border-color: var(--gold-soft); }
+.wcard--cat .t { font-family: 'Sora', system-ui, sans-serif; font-size: .95rem; font-weight: 700; letter-spacing: -.02em; }
+/* solid paper behind the dashed border — on the wedge gradient this
+   text was fighting the fill and losing */
+.wcard--alt { border-style: dashed; background: var(--paper); }
+.wcard--alt .s { color: var(--ink-2); }
+.wcard--dec { background: var(--gold-wash); border-color: var(--gold); }
+.wcard--dec .t { color: #5E3B08; }
+.wcard--dec .s { color: #7C540F; }
+
+@media (max-width: 900px) {
+  .wedge-grid { grid-template-columns: 1fr; }
+  .wedge-bg { display: none; }
+}
+
+/* expandability affordance — hints at the click-to-drill-in layer,
+   not wired up in these mockups */
+.can-open { cursor: pointer; transition: border-color .25s ease, transform .25s var(--ease-out), box-shadow .25s var(--ease-out); }
+.can-open:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px -20px rgba(90,60,10,.6);
+}
+</style>
+</head>
+
+<body>
+
+<header class="wrap page-head">
+  <h1>Structured markup &rarr; AI search</h1>
+  <p>Three takes on the same logic chain, all left&#8209;to&#8209;right: user needs feed bot needs, bot needs
+  name a decision category, alternatives get weighed, and a requirement ships. Same content in all
+  three &mdash; only the visual grammar changes. Hover any card to see where the click&#8209;to&#8209;expand
+  layer would attach.</p>
+</header>
+
+<!-- ============ OPTION 1 ============ -->
+<section class="wrap opt">
+  <div class="opt__head"><span class="opt__num">Option 1</span><h2>Flow funnel</h2></div>
+  <p class="opt__note">Sankey&#8209;style ribbons that <b>physically narrow</b> left to right &mdash; widest at
+  diffuse human needs, thinnest at the shipped requirement. Bot needs fan out, then converge back onto a
+  single category, which is the one place the chain visibly branches and rejoins. Most infographic&#8209;like
+  of the three; needs a wide viewport, so it would want a stacked fallback on phones.</p>
+  <div id="flow-mount"></div>
+</section>
+
+<!-- ============ OPTION 2 ============ -->
+<section class="wrap opt">
+  <div class="opt__head"><span class="opt__num">Option 2</span><h2>Decision tracks</h2></div>
+  <p class="opt__note">Four independent lanes, each a complete story you can read straight across in one
+  pass. The funnel reads as a <b>warming gradient</b> rather than a narrowing shape &mdash; each lane starts on
+  cool paper and ends in gold. Least visual machinery, most readable, and the only option that degrades
+  cleanly to a single column on mobile.</p>
+  <div id="tracks-mount"></div>
+</section>
+
+<!-- ============ OPTION 3 ============ -->
+<section class="wrap opt">
+  <div class="opt__head"><span class="opt__num">Option 3</span><h2>Funnel silhouette</h2></div>
+  <p class="opt__note">The most literal reading of the brief: an actual wedge narrowing left to right, with
+  the five stages as vertical slices inside it. <b>Volume does the talking</b> &mdash; the left edge is tall and
+  crowded with needs, the right edge is a short stack of decisions. Strongest at a glance, tightest on
+  space for text.</p>
+  <div class="wedge-wrap" id="wedge-mount"></div>
+</section>
+
+<script>
+/* ============================================================
+   One content source, three renderers. Everything below is the
+   compressed version of the mapping doc — deliberately terse,
+   since the whole point is that the picture carries the logic and
+   the detail lives behind a future click-to-expand layer.
+   ============================================================ */
+const STAGES = ['User needs', 'Bot needs', 'Decision category', 'Alternatives weighed', 'What shipped'];
+
+const THREADS = [
+  {
+    user: 'Hyper-specific, personal queries',
+    userEg: '“2bd waterfront, pet-friendly, ≤30 min bike to work”',
+    bots: [
+      { t: 'Reliable access', s: 'Extract cleanly, every refresh' },
+      { t: 'Depth &amp; rich detail', s: 'A vocabulary that can say it' }
+    ],
+    cat: 'Semantics',
+    catSub: 'schema + vocabulary',
+    alts: ['data-vocabulary.org', 'Dublin Core', 'One-size-fits-all types'],
+    altWhy: 'dead / archival / no personalization',
+    dec: 'schema.org',
+    decSub: 'Specialized Place sub-types, payment spec blocks, floor-plan aggregation'
+  },
+  {
+    user: 'Miss nothing',
+    userEg: '“Consider every listing in the borough”',
+    bots: [
+      { t: 'Full crawl coverage', s: 'No retries on failed renders' },
+      { t: 'Fast, complete render', s: 'Fixed crawl budget per domain' }
+    ],
+    cat: 'Rendering',
+    catSub: 'location · CSR/SSR · bot vs human',
+    alts: ['Footer placement', 'Client-side render', 'One render for all'],
+    altWhy: 'buried / JS not guaranteed / hurts humans',
+    dec: 'Top-level SSR',
+    decSub: 'Rendered in &lt;head&gt;, bot-specialized delivery'
+  },
+  {
+    user: 'Expert-level answers',
+    userEg: '“Teach me the neighborhoods, not one listing”',
+    bots: [
+      { t: 'Clean structure', s: 'Feeds a coherent knowledge graph' }
+    ],
+    cat: 'Topology',
+    catSub: 'hierarchy · format · aggregation',
+    alts: ['Flat markup', 'Microdata', 'No aggregation'],
+    altWhy: 'scattered nodes / body-bound / bloated payloads',
+    dec: 'Nested JSON-LD',
+    decSub: 'Entity linkages + aggregation keys for repeat floor plans'
+  },
+  {
+    user: 'Search that keeps improving',
+    userEg: '“Get better as I search”',
+    bots: [
+      { t: 'Sites that evolve fast', s: 'Keep pace with ranking changes' }
+    ],
+    cat: 'Maintenance',
+    catSub: 'workflow · testing · tooling',
+    alts: ['Per-team ownership'],
+    altWhy: 'markup drift, cross-codebase QA nightmare',
+    dec: 'Centralized repo',
+    decSub: 'One vocabulary, one test surface, build once & reuse'
+  }
+];
+
+/* ------------------------------------------------------------
+   OPTION 1 — SVG ribbons + foreignObject cards.
+   foreignObject is used so the node text gets real HTML wrapping
+   while the ribbon geometry stays exact at any width.
+   ------------------------------------------------------------ */
+(function renderFlow () {
+  const W = 1340, COL_W = 208;
+  const COL_X = [20, 293, 566, 839, 1112];
+  const ROW_TOP = 90, ROW_H = 160;
+  const H = ROW_TOP + THREADS.length * ROW_H + 10;
+
+  const rowY = i => ROW_TOP + ROW_H / 2 + i * ROW_H;
+  const botY = (i, j, n) => n === 1 ? rowY(i) : rowY(i) + (j === 0 ? -42 : 42);
+
+  /* a tapering ribbon between two vertical edges */
+  const ribbon = (x1, y1, t1, x2, y2, t2) => {
+    const c = (x2 - x1) * 0.5;
+    const a1 = y1 - t1 / 2, b1 = y1 + t1 / 2;
+    const a2 = y2 - t2 / 2, b2 = y2 + t2 / 2;
+    return `M${x1},${a1} C${x1 + c},${a1} ${x2 - c},${a2} ${x2},${a2} `
+         + `L${x2},${b2} C${x2 - c},${b2} ${x1 + c},${b1} ${x1},${b1} Z`;
+  };
+
+  const card = (x, y, w, h, cls, html) =>
+    `<foreignObject x="${x}" y="${y - h / 2}" width="${w}" height="${h}">` +
+    `<div xmlns="http://www.w3.org/1999/xhtml" class="node-card ${cls}">${html}</div></foreignObject>`;
+
+  let ribbons = '', nodes = '';
+
+  THREADS.forEach((th, i) => {
+    const n = th.bots.length;
+    const yc = rowY(i);
+
+    /* stage 1 -> 2 : fan out (thickest band in the funnel) */
+    th.bots.forEach((b, j) => {
+      const src = n === 1 ? yc : yc + (j === 0 ? -12 : 12);
+      ribbons += `<path class="ribbon" fill="var(--s1)" fill-opacity=".38" d="${
+        ribbon(COL_X[0] + COL_W, src, n === 1 ? 48 : 24, COL_X[1], botY(i, j, n), 32)}"/>`;
+    });
+
+    /* stage 2 -> 3 : fan back in onto the single category */
+    th.bots.forEach((b, j) => {
+      const tgt = n === 1 ? yc : yc + (j === 0 ? -8.5 : 8.5);
+      ribbons += `<path class="ribbon" fill="var(--s2)" fill-opacity=".42" d="${
+        ribbon(COL_X[1] + COL_W, botY(i, j, n), 30, COL_X[2], tgt, n === 1 ? 34 : 17)}"/>`;
+    });
+
+    /* 3 -> 4 -> 5 : one thread each, still narrowing */
+    ribbons += `<path class="ribbon" fill="var(--s3)" fill-opacity=".45" d="${
+      ribbon(COL_X[2] + COL_W, yc, 30, COL_X[3], yc, 24)}"/>`;
+    ribbons += `<path class="ribbon" fill="var(--s4)" fill-opacity=".5" d="${
+      ribbon(COL_X[3] + COL_W, yc, 24, COL_X[4], yc, 18)}"/>`;
+
+    /* nodes */
+    nodes += card(COL_X[0], yc, COL_W, 112, 'can-open',
+      `<div class="t">${th.user}</div><div class="s eg">${th.userEg}</div>`);
+
+    th.bots.forEach((b, j) => {
+      nodes += card(COL_X[1], botY(i, j, n), COL_W, 66, 'can-open',
+        `<div class="t">${b.t}</div><div class="s">${b.s}</div>`);
+    });
+
+    nodes += card(COL_X[2], yc, COL_W, 78, 'is-cat can-open',
+      `<div class="t">${th.cat}</div><div class="s">${th.catSub}</div>`);
+
+    nodes += card(COL_X[3], yc, COL_W, 112, 'is-alt can-open',
+      `<div class="s">${th.alts.map(a => `<span class="strike">${a}</span>`).join('<br/>')}</div>`);
+
+    nodes += card(COL_X[4], yc, COL_W, 96, 'is-dec can-open',
+      `<div class="t">${th.dec}</div><div class="s">${th.decSub}</div>`);
+  });
+
+  /* column headers */
+  let heads = '';
+  STAGES.forEach((s, i) => {
+    heads += `<foreignObject x="${COL_X[i]}" y="34" width="${COL_W}" height="30">` +
+      `<div xmlns="http://www.w3.org/1999/xhtml" class="stage-label">` +
+      `<i>0${i + 1}</i>${s}</div></foreignObject>`;
+  });
+
+  document.getElementById('flow-mount').innerHTML =
+    `<svg class="flow" viewBox="0 0 ${W} ${H}" role="img" ` +
+    `aria-label="Funnel from user needs through bot needs, decision categories and rejected alternatives to shipped requirements">` +
+    heads + ribbons + nodes + `</svg>`;
+})();
+
+/* ------------------------------------------------------------
+   OPTION 2 — CSS swimlanes
+   ------------------------------------------------------------ */
+(function renderTracks () {
+  const cols = '1.15fr 1.15fr .85fr 1fr 1.15fr';
+  let html = `<div class="tracks" style="--cols:${cols}">`;
+
+  html += `<div class="tracks__head" style="--cols:${cols}">` +
+    STAGES.map((s, i) => `<div class="stage-label"><i>0${i + 1}</i>${s}</div>`).join('') +
+    `</div>`;
+
+  THREADS.forEach(th => {
+    html += `<div class="track">` +
+      `<div class="cell chev can-open"><div class="t">${th.user}</div><div class="s eg">${th.userEg}</div></div>` +
+      `<div class="cell chev can-open">` +
+        th.bots.map(b => `<div class="t">${b.t}</div><div class="s">${b.s}</div>`).join('') +
+      `</div>` +
+      `<div class="cell cell--cat chev can-open"><div class="t">${th.cat}</div><div class="s">${th.catSub}</div></div>` +
+      `<div class="cell cell--alt chev can-open"><div class="s">` +
+        th.alts.map(a => `<span class="strike">${a}</span>`).join('<br/>') +
+      `</div></div>` +
+      `<div class="cell cell--dec can-open"><div class="t">${th.dec}</div><div class="s">${th.decSub}</div></div>` +
+    `</div>`;
+  });
+
+  html += `</div>`;
+  document.getElementById('tracks-mount').innerHTML = html;
+})();
+
+/* ------------------------------------------------------------
+   OPTION 3 — narrowing wedge
+   ------------------------------------------------------------ */
+(function renderWedge () {
+  const mount = document.getElementById('wedge-mount');
+
+  const head = STAGES.map((s, i) =>
+    `<div class="stage-label"><i>0${i + 1}</i>${s}</div>`).join('');
+
+  let cols = '';
+  STAGES.forEach((s, si) => {
+    let cards = '';
+    THREADS.forEach(th => {
+      if (si === 0) cards += `<div class="wcard can-open"><div class="t">${th.user}</div><div class="s eg">${th.userEg}</div></div>`;
+      if (si === 1) cards += `<div class="wcard can-open">` +
+        th.bots.map(b => `<div class="t">${b.t}</div>`).join('') + `</div>`;
+      if (si === 2) cards += `<div class="wcard wcard--cat can-open"><div class="t">${th.cat}</div><div class="s">${th.catSub}</div></div>`;
+      if (si === 3) cards += `<div class="wcard wcard--alt can-open"><div class="s">` +
+        th.alts.map(a => `<span class="strike">${a}</span>`).join('<br/>') + `</div></div>`;
+      if (si === 4) cards += `<div class="wcard wcard--dec can-open"><div class="t">${th.dec}</div></div>`;
+    });
+    cols += `<div class="wcol">${cards}</div>`;
+  });
+
+  mount.innerHTML =
+    `<div class="wedge-head">${head}</div>` +
+    `<div class="wedge-body">` +
+      `<svg class="wedge-bg" aria-hidden="true" preserveAspectRatio="none">` +
+        `<defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="0">` +
+          `<stop offset="0" stop-color="var(--s1)" stop-opacity=".16"/>` +
+          `<stop offset="1" stop-color="var(--s5)" stop-opacity=".32"/>` +
+        `</linearGradient></defs>` +
+        `<path id="wedge-path" fill="url(#wg)"/>` +
+      `</svg>` +
+      `<div class="wedge-grid">${cols}</div>` +
+    `</div>`;
+
+  /* Draw the silhouette from the *measured* columns so the wedge always
+     hugs the real content instead of a hard-coded guess. Re-measured on
+     resize, since the columns reflow. */
+  const drawWedge = () => {
+    const body = mount.querySelector('.wedge-body');
+    const svg  = mount.querySelector('.wedge-bg');
+    const path = mount.querySelector('#wedge-path');
+    const b = body.getBoundingClientRect();
+    if (!b.width) return;
+
+    const PAD = 16;
+    const cells = [...mount.querySelectorAll('.wcol')].map(c => {
+      const r = c.getBoundingClientRect();
+      return {
+        l: r.left - b.left, r: r.right - b.left,
+        t: r.top - b.top - PAD, bo: r.bottom - b.top + PAD
+      };
+    });
+    if (!cells.length) return;
+
+    svg.setAttribute('viewBox', `0 0 ${b.width} ${b.height}`);
+
+    /* faceted wedge: flat across each column, a diagonal between them */
+    let top = `M${cells[0].l},${cells[0].t}`;
+    cells.forEach((c, i) => {
+      if (i) top += ` L${c.l},${c.t}`;
+      top += ` L${c.r},${c.t}`;
+    });
+    let bot = ` L${cells[cells.length - 1].r},${cells[cells.length - 1].bo}`;
+    for (let i = cells.length - 1; i >= 0; i--) {
+      bot += ` L${cells[i].l},${cells[i].bo}`;
+      if (i) bot += ` L${cells[i - 1].r},${cells[i - 1].bo}`;
+    }
+    path.setAttribute('d', top + bot + ' Z');
+  };
+
+  requestAnimationFrame(drawWedge);
+  window.addEventListener('resize', drawWedge, { passive: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawWedge);
+})();
+</script>
+</body>
+</html>

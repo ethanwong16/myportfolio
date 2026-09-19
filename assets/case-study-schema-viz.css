@@ -1,0 +1,157 @@
+/* ============================================================
+   case-study-schema-viz.css — the structured-markup before/after
+   visualization (see case-study-schema-viz.js). Namespaced csx-.
+   Depends on tokens.css for the palette only.
+   ============================================================ */
+
+.csx-mount {
+  /* Required, same reason as .csf in case-study-funnel.css: as a grid
+     item inside .cs-sections, default min-width:auto lets this honour
+     its content's min-content size instead of its 1fr track, which
+     can blow the whole page out sideways on narrow viewports. */
+  min-width: 0;
+}
+
+.csx {
+  margin-block: clamp(1.5rem, 4vw, 2.5rem);
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.csx-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: .35rem;
+}
+.csx-intro { font-size: var(--step--1); color: var(--ink-2); margin-bottom: 1rem; max-width: 60ch; }
+
+.csx-exhibit {
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--paper-2) 40%, transparent);
+  min-width: 0;
+}
+
+/* ---- shared: a before/after pair, side by side, in one glance.
+   Individual code panels keep their own horizontal scroll for a long
+   line — that's a normal code-block trade-off — but both halves of
+   the comparison are always visible together. ---- */
+.csx-pair { display: flex; gap: .75rem; min-width: 0; align-items: stretch; }
+.csx-pair--topo { align-items: center; }
+.csx-arrow { display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.1rem; flex: 0 0 auto; }
+
+/* ---- Exhibit A: code panels ---- */
+.csx-panel { flex: 1 1 0; min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
+.csx-panel--after { border-color: var(--gold-soft); }
+.csx-panel__head { display: flex; flex-direction: column; gap: .15rem; padding: .7rem .9rem .5rem; }
+.csx-panel__label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.csx-panel--after .csx-panel__label { color: #5E3B08; }
+.csx-panel__caption { font-size: var(--step--1); color: var(--ink-2); }
+.csx-tag { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: var(--ink-3); padding: 0 .9rem; }
+
+.csx-code {
+  margin: .4rem 0 0; padding: .75rem .9rem 1rem; overflow-x: auto;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px; line-height: 1.6; color: var(--ink-2);
+}
+.csx-code--ld { background: var(--gold-wash); }
+.csx-code__line { display: block; white-space: pre; }
+.csx-code__line--hit {
+  background: color-mix(in srgb, var(--gold-soft) 55%, transparent);
+  box-shadow: -3px 0 0 var(--gold) inset;
+  color: var(--ink);
+  border-radius: 2px;
+}
+.csx-code__line--ld { color: #5E3B08; }
+.csx-hitnote { margin: 0; padding: 0 .9rem .8rem; font-size: 11.5px; color: var(--ink-3); font-style: italic; }
+
+/* ---- Exhibit B: topology svgs ---- */
+.csx-figure { flex: 1 1 0; min-width: 0; margin: 0; text-align: center; }
+.csx-figure figcaption { font-size: 11.5px; color: var(--ink-3); margin-bottom: .4rem; }
+.csx-svg { display: block; width: 100%; height: auto; }
+.csx-svg--before .csx-node { fill: var(--paper); stroke: var(--ink-3); stroke-width: 1.4; }
+.csx-svg--before .csx-edge { stroke: var(--line); stroke-width: 1.4; }
+.csx-svg--after .csx-node { fill: var(--paper); stroke: var(--gold); stroke-width: 1.6; }
+.csx-svg--after .csx-node--root { fill: var(--gold); stroke: var(--gold); }
+.csx-svg--after .csx-edge { stroke: var(--gold-soft); stroke-width: 1.6; }
+
+/* ---- Exhibit B: the real, un-simplified graph ---- */
+.csx-real {
+  margin: 1.1rem 0 0; padding-top: 1rem; border-top: 1px dashed var(--line);
+}
+.csx-real__img {
+  display: block; width: 100%; max-width: 480px; margin-inline: auto;
+  border: 1px solid var(--line); border-radius: 10px; background: #fff;
+}
+.csx-real figcaption {
+  max-width: 60ch; margin: .6rem auto 0; text-align: center;
+  font-size: 11.5px; line-height: 1.5; color: var(--ink-3);
+}
+.csx-real figcaption a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ---- the house: isometric 3-floor stack ----
+   Single-hue depth ramp (deepens toward the base, like sediment) —
+   shade encodes "which floor," never category, matching the funnel's
+   own single-accent rule. Front faces catch the most light, top
+   faces (the sliced rims) the second-most, side faces the least.
+
+   The house SVG and the ribbon text are two separate elements (not
+   one SVG with foreignObject ribbons) on purpose: foreignObject
+   content is scaled by the SVG's own viewBox transform, which would
+   shrink the ribbon text unreadably small once the house is squeezed
+   onto a narrow phone screen. Keeping ribbons as plain HTML means
+   their font size is never at the mercy of the diagram's width. */
+.csx-house-row { display: flex; gap: clamp(1rem, 3vw, 2rem); align-items: stretch; min-width: 0; }
+.csx-house-fig { flex: 0 1 260px; min-width: 140px; }
+.csx-house-svg { display: block; width: 100%; height: auto; }
+.csx-ribbons { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: .7rem; }
+
+.csx-hf--roof.csx-hf--front { fill: var(--gold); }
+.csx-hf--roof.csx-hf--top   { fill: var(--gold-bright); }
+.csx-hf--roof.csx-hf--side  { fill: #8C6013; }
+/* the parapet ledge sits a shade darker than the roof slab under it */
+.csx-hf--ledge.csx-hf--front { fill: #8C6013; }
+.csx-hf--ledge.csx-hf--top   { fill: var(--gold); }
+.csx-hf--ledge.csx-hf--side  { fill: #6E4B0E; }
+
+.csx-hf--t1.csx-hf--front { fill: var(--gold-soft); }
+.csx-hf--t1.csx-hf--top   { fill: var(--gold-bright); }
+.csx-hf--t1.csx-hf--side  { fill: var(--gold); }
+
+.csx-hf--t2.csx-hf--front { fill: var(--gold-bright); }
+.csx-hf--t2.csx-hf--top   { fill: var(--gold); }
+.csx-hf--t2.csx-hf--side  { fill: #8C6013; }
+
+.csx-hf--t3.csx-hf--front { fill: var(--clay); }
+.csx-hf--t3.csx-hf--top   { fill: #C68A4E; }
+.csx-hf--t3.csx-hf--side  { fill: #7A4A28; }
+
+/* windows: dark "glass" against any wall tone, plus a couple of
+   occupied silhouettes so the building reads as lived-in */
+.csx-win { fill: rgba(35, 26, 12, .38); stroke: rgba(255, 250, 240, .5); stroke-width: 1; }
+.csx-win__person { fill: rgba(35, 26, 12, .82); }
+
+.csx-ribbon {
+  flex: 1 1 0; box-sizing: border-box; display: flex; align-items: center; gap: .7rem;
+  padding: .7rem .9rem; border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--paper);
+  border-style: solid; border-width: 1px 1px 1px 4px; border-color: var(--line) var(--line) var(--line) var(--gold);
+}
+.csx-ribbon--t1 { background: color-mix(in srgb, var(--gold-soft) 45%, var(--paper)); border-left-color: var(--gold-soft); }
+.csx-ribbon--t2 { background: color-mix(in srgb, var(--gold-bright) 24%, var(--paper)); border-left-color: var(--gold-bright); }
+.csx-ribbon--t3 { background: color-mix(in srgb, var(--clay) 18%, var(--paper)); border-left-color: var(--clay); }
+
+.csx-ribbon__num {
+  flex: none; font-family: 'Sora', system-ui, sans-serif; font-weight: 700;
+  font-size: 13px; color: var(--gold); opacity: .8;
+}
+.csx-hico { flex: none; width: 1.4em; height: 1.4em; fill: currentColor; color: #5E3B08; }
+.csx-ribbon__text { min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
+.csx-ribbon__text strong { font-size: 13.5px; color: var(--ink); }
+.csx-ribbon__text span { font-size: 11.5px; line-height: 1.4; color: var(--ink-2); }
+
+@media (max-width: 640px) {
+  .csx-house-row { flex-direction: column; }
+  .csx-house-fig { flex-basis: auto; max-width: 200px; margin-inline: auto; }
+}

@@ -1,0 +1,144 @@
+/* ============================================================
+   case-study-workflow.css — the two workflow diagrams (see
+   case-study-workflow.js). Namespaced csw-. Depends on
+   tokens.css for the palette only.
+   ============================================================ */
+
+.csw-mount { min-width: 0; }
+
+.csw {
+  margin-block: clamp(1.5rem, 4vw, 2.5rem);
+  display: grid;
+  gap: clamp(2rem, 5vw, 3rem);
+}
+
+.csw-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: .35rem;
+}
+.csw-intro { font-size: var(--step--1); color: var(--ink-2); margin-bottom: .5rem; max-width: 60ch; }
+.csw-hint { font-size: 11.5px; color: var(--ink-3); font-style: italic; margin-bottom: 1rem; }
+
+.csw-exhibit {
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--paper-2) 40%, transparent);
+  min-width: 0;
+}
+
+.csw-ico { flex: none; width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ------------------------------------------------------------
+   COMPARE — INITIAL vs IMPROVED columns
+   ------------------------------------------------------------ */
+.csw-compare { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 3vw, 1.75rem); align-items: start; }
+
+.csw-col {
+  min-width: 0;
+  padding: clamp(.9rem, 2.5vw, 1.25rem);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+}
+.csw-col--improved { border-color: var(--gold-soft); background: var(--gold-wash); }
+
+.csw-col__head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: .75rem;
+  margin-bottom: 1rem; padding-bottom: .75rem; border-bottom: 1px solid var(--line);
+}
+.csw-col--improved .csw-col__head { border-bottom-color: var(--gold-soft); }
+.csw-col__tag { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.csw-col--improved .csw-col__tag { color: #5E3B08; }
+.csw-col__time {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; color: var(--ink-2);
+}
+.csw-col--improved .csw-col__time { color: var(--gold); font-weight: 600; }
+.csw-col__time .csw-ico { color: var(--gold); }
+
+.csw-segment + .csw-segment { margin-top: 0; }
+.csw-seg-arrow { display: flex; justify-content: center; height: 1.1rem; color: var(--ink-3); }
+.csw-seg-arrow::after { content: '\2193'; }
+.csw-col--improved .csw-seg-arrow { color: var(--gold); }
+
+.csw-segment__head {
+  display: flex; justify-content: space-between; gap: .5rem;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin-bottom: .5rem;
+}
+.csw-segment__time { font-weight: 700; color: var(--ink-2); text-transform: none; letter-spacing: 0; }
+.csw-col--improved .csw-segment__time { color: var(--gold); }
+
+.csw-steps { display: grid; gap: 0; }
+.csw-step {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .5rem .6rem; border-radius: 10px;
+  font-size: var(--step--1); color: var(--ink-2);
+}
+.csw-step__icon {
+  flex: none; display: grid; place-items: center;
+  width: 1.9rem; height: 1.9rem; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--paper); color: var(--ink-2);
+}
+.csw-step__label { min-width: 0; }
+.csw-arrow { display: flex; justify-content: center; height: .9rem; color: var(--ink-3); font-size: .75rem; }
+.csw-arrow::after { content: '\2193'; }
+
+.csw-step--highlight {
+  padding: 0;
+  border: 1px solid var(--gold-soft);
+  background: color-mix(in srgb, var(--gold-soft) 30%, var(--paper));
+}
+.csw-step--highlight details { padding: .5rem .6rem; }
+.csw-step--highlight summary {
+  display: flex; align-items: center; gap: .6rem; cursor: pointer;
+  list-style: none; color: var(--ink); font-weight: 600;
+}
+.csw-step--highlight summary::-webkit-details-marker { display: none; }
+.csw-step--highlight summary::after { content: '+'; margin-left: auto; color: var(--gold); font-weight: 700; }
+.csw-step--highlight[open] summary::after,
+.csw-step--highlight details[open] summary::after { content: '\2013'; }
+.csw-step--highlight .csw-step__icon { background: var(--gold-soft); border-color: var(--gold); color: #5E3B08; }
+.csw-step__detail {
+  margin-top: .5rem; padding-top: .5rem; border-top: 1px dashed var(--gold-soft);
+  font-size: 12px; line-height: 1.5; color: var(--ink-2);
+}
+
+/* ------------------------------------------------------------
+   FULL FLOW — the guardrail pipeline
+   ------------------------------------------------------------ */
+.csw-scrollhint { font-size: 11.5px; color: var(--ink-3); font-style: italic; margin-bottom: .75rem; }
+
+.csw-flow {
+  display: flex; align-items: stretch; gap: .4rem;
+  overflow-x: auto; padding-bottom: .5rem;
+}
+.csw-flow__connector { flex: none; display: flex; align-items: center; color: var(--gold); font-size: 1.1rem; }
+.csw-flow__stage {
+  flex: 1 1 190px; min-width: 190px;
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: 1rem; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--paper);
+}
+.csw-flow__stage--highlight { border-color: var(--gold-soft); background: var(--gold-wash); }
+.csw-flow__icon { color: var(--gold); }
+.csw-flow__title { display: flex; align-items: center; gap: .4rem; font-size: var(--step--1); font-weight: 700; letter-spacing: -.01em; color: var(--ink); }
+.csw-flow__title .csw-ico { color: var(--gold); }
+.csw-flow__sub { font-size: 12px; color: var(--ink-2); line-height: 1.5; }
+
+.csw-flow__branch { display: flex; flex-direction: column; gap: .4rem; }
+.csw-flow__branch > span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.csw-flow__icons { display: flex; flex-wrap: wrap; gap: .6rem; }
+.csw-iconitem { display: flex; flex-direction: column; align-items: center; gap: .25rem; font-size: 10.5px; color: var(--ink-2); }
+.csw-iconitem .csw-ico { width: 1.3em; height: 1.3em; color: var(--gold); }
+
+.csw-flow__pills { display: flex; flex-wrap: wrap; gap: .35rem; }
+.csw-flow__pills li {
+  font-size: 11px; color: var(--ink-2);
+  padding: .15rem .55rem; border: 1px solid var(--line); border-radius: 999px;
+}
+.csw-flow__stage--highlight .csw-flow__pills li { border-color: var(--gold-soft); background: var(--paper); }
+
+@media (max-width: 780px) {
+  .csw-compare { grid-template-columns: 1fr; }
+}

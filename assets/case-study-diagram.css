@@ -1,0 +1,36 @@
+/* ============================================================
+   case-study-diagram.css — wrapper chrome for bespoke node/arrow
+   SVG diagrams (see case-study-diagram.js). Namespaced csd-.
+   Depends on tokens.css for the palette only. The SVG itself
+   carries no classes of its own — every visual property is set
+   as a presentation attribute so the markup stays a single
+   portable string in case-study-diagram.js.
+   ============================================================ */
+
+.csd-mount { min-width: 0; }
+
+.csd-exhibit {
+  margin-block: clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--paper-2) 40%, transparent);
+  min-width: 0;
+}
+
+.csd-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: .35rem;
+}
+.csd-intro { font-size: var(--step--1); color: var(--ink-2); margin-bottom: .5rem; max-width: 60ch; }
+.csd-scrollhint { font-size: 11.5px; color: var(--ink-3); font-style: italic; margin-bottom: .75rem; }
+
+.csd-frame {
+  overflow-x: auto;
+  padding-bottom: .25rem;
+}
+.csd-frame svg {
+  display: block;
+  height: auto;
+  min-width: 640px;
+}

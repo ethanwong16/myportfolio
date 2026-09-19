@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structured markup funnel — v3</title>
+<meta name="theme-color" content="#FCF8F0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<link rel="stylesheet" href="../assets/tokens.css">
+
+<style>
+/* ============================================================
+   Stage ramp: validated single-hue sequential scale
+   (validate_palette.js, light, surface #FCF8F0) — monotone L,
+   >=0.06 dL steps, light end clears paper at 2.10:1, hue spread 13deg.
+   ============================================================ */
+:root {
+  --s1: #D0A85C; --s2: #BE8F3A; --s3: #AC7823; --s4: #946115; --s5: #74490B;
+  --paper: #FCF8F0; --paper-2: #F5EDDE;
+  --ink: #17150F; --ink-2: #504A3C; --ink-3: #8C8371; --line: #E7DCC6;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+html { background: var(--paper); }
+body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); background: var(--paper); }
+h1, h2, h3 { font-family: 'Sora', system-ui, sans-serif; }
+
+.wrap { width: 100%; max-width: 1480px; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 3rem); }
+.page-head { padding-block: clamp(2.5rem, 6vw, 4rem) clamp(1rem, 2vw, 1.5rem); }
+.page-head h1 { font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.page-head p { margin-top: .9rem; color: var(--ink-2); max-width: 66ch; line-height: 1.6; }
+.opt { padding-block: clamp(1.5rem, 4vw, 2.5rem); border-top: 1px solid var(--line); }
+
+.ctl { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .9rem; }
+.btn {
+  font: inherit; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase;
+  padding: .55em 1.1em; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--ink-2);
+  transition: border-color .25s ease, color .25s ease, background-color .25s ease;
+}
+.btn:hover { border-color: var(--gold); color: var(--ink); background: var(--gold-wash); }
+.btn[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-wash); color: #5E3B08; font-weight: 600; }
+.ctl__hint { font-size: .75rem; color: var(--ink-3); }
+
+.scroller { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; padding-bottom: .5rem; }
+/* min-width belongs on the mount, not the svg — the svg is a grandchild */
+.scroller > div { min-width: 1180px; }
+.scroller svg.funnel { display: block; width: 100%; height: auto; }
+.scroll-hint { display: none; font-size: .72rem; color: var(--ink-3); margin-bottom: .5rem; }
+@media (max-width: 1100px) { .scroll-hint { display: block; } }
+
+/* ---- svg nodes. foreignObject clips at its bounds, so a 1px border on
+   a box sized exactly to it loses an edge at fractional scale ---- */
+.fo-pad { padding: 2px; box-sizing: border-box; height: 100%; }
+.card {
+  height: 100%; box-sizing: border-box; border-radius: 10px; padding: 8px 11px;
+  display: flex; flex-direction: column; justify-content: center; gap: 3px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--paper); border: 1px solid var(--line);
+}
+.card .t { font-size: 13px; line-height: 1.28; font-weight: 600; letter-spacing: -.01em; color: var(--ink); }
+.card .s { font-size: 10.5px; line-height: 1.35; color: var(--ink-3); }
+.card--cat .t { font-family: 'Sora', system-ui, sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+.card--dec { background: var(--gold-wash); border-color: var(--gold); }
+.card--dec .t { color: #5E3B08; }
+.card--dec .s { color: #7C540F; }
+.chip {
+  height: 100%; box-sizing: border-box; border-radius: 7px; padding: 0 9px;
+  display: flex; align-items: center; font-size: 11px; line-height: 1.2;
+  border: 1px solid var(--line); background: var(--paper); color: var(--ink-3);
+}
+.chip--won { border-color: var(--gold); color: var(--ink); font-weight: 600; }
+
+.sthead {
+  display: flex; align-items: center; gap: .4rem; white-space: nowrap;
+  font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+}
+.sthead i { font-style: normal; font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 700; }
+
+/* ---- column focus + hover ---- */
+.col-hit { fill: transparent; cursor: pointer; }
+.stage-g { transition: opacity .3s ease, transform .3s var(--ease-out); transform-box: fill-box; transform-origin: center; }
+svg[data-focus] .stage-g { opacity: .32; }
+svg[data-focus="0"] .stage-g[data-stage="0"], svg[data-focus="1"] .stage-g[data-stage="1"],
+svg[data-focus="2"] .stage-g[data-stage="2"], svg[data-focus="3"] .stage-g[data-stage="3"],
+svg[data-focus="4"] .stage-g[data-stage="4"] { opacity: 1; }
+svg[data-focus] .ribbons { opacity: .28; transition: opacity .3s ease; }
+
+.colbg { fill: var(--paper-2); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+svg[data-hover="0"] .colbg[data-stage="0"], svg[data-hover="1"] .colbg[data-stage="1"],
+svg[data-hover="2"] .colbg[data-stage="2"], svg[data-hover="3"] .colbg[data-stage="3"],
+svg[data-hover="4"] .colbg[data-stage="4"] { opacity: .8; }
+/* the lane stays lit for as long as you are inside the detail view */
+svg[data-focus="0"] .colbg[data-stage="0"], svg[data-focus="1"] .colbg[data-stage="1"],
+svg[data-focus="2"] .colbg[data-stage="2"], svg[data-focus="3"] .colbg[data-stage="3"],
+svg[data-focus="4"] .colbg[data-stage="4"] { opacity: 1; fill: var(--gold-wash); }
+svg[data-hover="0"] .stage-g[data-stage="0"], svg[data-hover="1"] .stage-g[data-stage="1"],
+svg[data-hover="2"] .stage-g[data-stage="2"], svg[data-hover="3"] .stage-g[data-stage="3"],
+svg[data-hover="4"] .stage-g[data-stage="4"] { transform: scale(1.018); opacity: 1; }
+
+foreignObject.is-lit .card, foreignObject.is-lit .chip {
+  border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft);
+}
+
+/* ============================================================
+   DETAIL PANEL — opens beside the column you clicked
+   ============================================================ */
+.fstage { position: relative; }
+.dpanel {
+  position: absolute; z-index: 6; display: flex; flex-direction: column;
+  overflow-y: auto; overscroll-behavior: contain;
+  padding: 1rem 1.1rem; border-radius: 16px;
+  border: 1px solid var(--gold-soft);
+  background: color-mix(in srgb, var(--paper) 97%, transparent);
+  box-shadow: 0 30px 70px -46px rgba(90, 60, 10, .6);
+  animation: dpop .28s var(--ease-out) both;
+}
+@keyframes dpop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.dpanel__head { display: flex; align-items: baseline; gap: .55rem; padding-bottom: .6rem; border-bottom: 1px solid var(--line); }
+.dpanel__num { font-size: .62rem; font-weight: 700; letter-spacing: .14em; color: var(--gold); }
+.dpanel__title { font-family: 'Sora', system-ui, sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: -.02em; }
+.dpanel__x {
+  margin-left: auto; font: inherit; font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+  background: none; border: 0; color: var(--ink-3); cursor: pointer;
+}
+.dpanel__x:hover { color: var(--gold); }
+.dbody { display: grid; gap: .7rem; padding-top: .8rem; }
+.dcard { border-radius: 12px; border: 1px solid var(--line); background: var(--paper); transition: border-color .2s ease, box-shadow .2s ease; }
+.dcard.is-lit { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
+
+.ico { width: 1em; height: 1em; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---- 01 user needs: persona, warm, quote-led ---- */
+.uc { display: grid; grid-template-columns: auto 1fr; gap: .9rem; padding: .95rem 1.05rem; }
+.uc__ico {
+  width: 2.2rem; height: 2.2rem; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.15rem;
+  color: var(--gold); background: var(--gold-wash); border: 1px solid var(--gold-soft);
+}
+.uc__need { font-size: .9rem; font-weight: 700; letter-spacing: -.015em; line-height: 1.35; margin-bottom: .5rem; }
+.uc__quote {
+  margin: 0; padding-left: .8rem; border-left: 2px solid var(--gold-soft);
+  font-size: .8rem; line-height: 1.65; color: var(--ink-2); font-style: italic;
+}
+.uc__who { display: block; margin-top: .45rem; font-style: normal; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+
+/* ---- 02 bot needs: technical / spec sheet ---- */
+.pipe { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; margin-bottom: .3rem; padding: .6rem .7rem;
+  border: 1px dashed var(--line); border-radius: 10px; background: var(--paper-2); }
+.pipe__step { font-family: var(--mono); font-size: .62rem; letter-spacing: .06em; text-transform: uppercase;
+  padding: .3em .6em; border-radius: 5px; background: var(--paper); border: 1px solid var(--line); color: var(--ink-2); }
+.pipe__arrow { color: var(--gold); font-size: .7rem; }
+.bc { padding: .85rem 1rem; }
+.bc__name { display: flex; align-items: flex-start; gap: .5rem; font-family: var(--mono); font-size: .78rem; font-weight: 600;
+  line-height: 1.4; color: var(--ink); margin-bottom: .55rem; }
+.bc__name::before { content: "▸"; color: var(--gold); flex: none; }
+.bc__pts { display: grid; gap: .35rem; }
+.bc__pts li { position: relative; padding-left: 1rem; font-size: .76rem; line-height: 1.6; color: var(--ink-2); }
+.bc__pts li::before { content: ""; position: absolute; left: 0; top: .62em; width: .4rem; height: 1px; background: var(--gold); }
+
+/* ---- 03 categories: four pillars ---- */
+.pc { display: grid; grid-template-columns: 3px 1fr; gap: .9rem; padding: 0; overflow: hidden; }
+.pc__bar { background: linear-gradient(180deg, var(--s2), var(--s5)); }
+.pc__in { padding: .85rem 1rem .95rem 0; }
+.pc__name { font-family: 'Sora', system-ui, sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: -.025em; }
+.pc__def { font-size: .76rem; color: var(--ink-3); margin-top: .1rem; margin-bottom: .6rem; }
+.pc__subs { display: grid; gap: .3rem; margin-bottom: .65rem; }
+.pc__sub { display: grid; grid-template-columns: auto 1fr; gap: .5rem; align-items: baseline; }
+.pc__k { font-size: .66rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold);
+  background: var(--gold-wash); border: 1px solid var(--gold-soft); padding: .2em .5em; border-radius: 5px; white-space: nowrap; }
+.pc__v { font-size: .74rem; line-height: 1.5; color: var(--ink-2); }
+.pc__cov { border-top: 1px dashed var(--line); padding-top: .55rem; }
+.pc__covlab { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: .3rem; }
+.pc__cov li { position: relative; padding-left: 1.1rem; font-size: .73rem; line-height: 1.55; color: var(--ink-2); }
+.pc__cov li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--gold); font-size: .7rem; }
+
+/* ---- 04 options: bullets, quiet heading ---- */
+.oc { padding: .85rem 1rem; }
+.oc__thread { font-size: .62rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--gold); margin-bottom: .55rem; }
+.og { margin-bottom: .7rem; }
+.og:last-child { margin-bottom: 0; }
+.og__head { font-size: .76rem; line-height: 1.55; color: var(--ink); font-weight: 500; margin-bottom: .35rem; }
+.og__b { display: grid; gap: .28rem; margin-bottom: .4rem; }
+.og__b li { position: relative; padding-left: 1rem; font-size: .73rem; line-height: 1.55; color: var(--ink-2); }
+.og__b li::before { content: ""; position: absolute; left: 0; top: .6em; width: .4rem; height: 1px; background: var(--ink-3); }
+.og__sub { display: grid; gap: .35rem; margin-top: .3rem; }
+.og__subrow { padding: .45rem .6rem; border-radius: 8px; background: var(--paper-2); }
+.og__subk { font-size: .68rem; font-weight: 700; color: var(--ink); display: block; margin-bottom: .15rem; }
+.og__subv { font-size: .72rem; line-height: 1.55; color: var(--ink-2); }
+.oc__pills { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .7rem; padding-top: .6rem; border-top: 1px dashed var(--line); }
+.oc__pill { font-size: .68rem; padding: .3em .7em; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-3); background: var(--paper); }
+.oc__pill.won { border-color: var(--gold); background: var(--gold-wash); color: #5E3B08; font-weight: 600; }
+
+/* ---- 05 decisions: the payoff, strongest treatment ---- */
+.dec { border: 1px solid var(--gold); border-radius: 14px; overflow: hidden; background: var(--paper); }
+.dec.is-lit { box-shadow: 0 0 0 2px var(--gold-soft); }
+.dec__top {
+  display: flex; align-items: center; gap: .6rem; padding: .7rem .95rem;
+  background: linear-gradient(90deg, var(--gold-wash), color-mix(in srgb, var(--gold-soft) 55%, transparent));
+  border-bottom: 1px solid var(--gold-soft);
+}
+.dec__ico { width: 1.7rem; height: 1.7rem; border-radius: 8px; display: grid; place-items: center;
+  background: var(--paper); border: 1px solid var(--gold); color: var(--gold); font-size: .95rem; flex: none; }
+.dec__name { font-family: 'Sora', system-ui, sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: -.025em; color: #5E3B08; }
+.dec__thread { margin-left: auto; font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: #7C540F; }
+.dec__in { padding: .8rem .95rem; display: grid; gap: .75rem; }
+.dg__head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; margin-bottom: .4rem; }
+.dg__k { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.dg__v { font-size: .85rem; font-weight: 700; letter-spacing: -.015em; color: var(--ink); }
+.dg__proof { display: grid; gap: .3rem; }
+.dg__proof li { position: relative; padding-left: 1.15rem; font-size: .74rem; line-height: 1.55; color: var(--ink-2); }
+.dg__proof li::before { content: "✓"; position: absolute; left: 0; top: -.05em; color: var(--gold); font-size: .72rem; font-weight: 700; }
+.di { margin-top: .5rem; padding: .5rem .65rem; border-radius: 8px; background: var(--paper-2); }
+.di__t { font-size: .74rem; font-weight: 700; color: var(--ink); margin-bottom: .25rem; }
+.di__b li { position: relative; padding-left: 1rem; font-size: .72rem; line-height: 1.55; color: var(--ink-2); }
+.di__b li::before { content: ""; position: absolute; left: 0; top: .6em; width: .4rem; height: 1px; background: var(--gold); }
+
+/* ---- show-all list below ---- */
+.panels { display: grid; gap: 1rem; margin-top: 1.25rem; }
+.panel { border: 1px solid var(--gold-soft); border-radius: 14px;
+  background: color-mix(in srgb, var(--paper-2) 45%, transparent); padding: clamp(1rem, 2.5vw, 1.5rem); }
+.panel__head { display: flex; align-items: baseline; gap: .7rem; margin-bottom: 1rem; }
+.panel__num { font-size: .68rem; font-weight: 700; letter-spacing: .14em; color: var(--gold); }
+.panel__title { font-size: 1.1rem; font-weight: 700; letter-spacing: -.02em; }
+.panel .dbody { padding-top: 0; }
+
+ul, ol { margin: 0; padding: 0; list-style: none; }
+@media (prefers-reduced-motion: reduce) { .stage-g, .colbg, .dpanel { transition: none; animation: none; } }
+</style>
+</head>
+
+<body>
+
+<header class="wrap page-head">
+  <h1>Structured markup &rarr; AI search</h1>
+  <p>Click any column to open its detail beside the funnel. Each stage gets its own treatment rather than
+  one generic panel &mdash; and the wording inside is yours, kept in the nested structure your doc already had.</p>
+</header>
+
+<section class="wrap opt">
+  <div class="ctl" id="ctl"></div>
+  <p class="scroll-hint">&larr; scroll sideways to follow the funnel &rarr;</p>
+  <div class="scroller"><div class="fstage" id="fstage"><div id="funnel"></div></div></div>
+  <div class="panels" id="panels"></div>
+</section>
+
+<script src="../assets/funnel-data-zsm.js"></script>
+<script>
+const STAGES = window.FUNNEL_STAGES, THREADS = window.FUNNEL_THREADS;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* icons — inline so nothing is fetched */
+const ICON = {
+  home:  '<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  scan:  '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/>',
+  graph: '<circle cx="12" cy="4.5" r="2"/><circle cx="4.5" cy="16" r="2"/><circle cx="19.5" cy="16" r="2"/><path d="M12 6.5L5.6 14.3M12 6.5l6.4 7.8M6.5 16h11"/>',
+  loop:  '<path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/>',
+  check: '<path d="M20 6L9 17l-5-5"/>',
+  layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  code:  '<path d="M8 6l-5 6 5 6M16 6l5 6-5 6"/>',
+  box:   '<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'
+};
+const icon = k => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICON[k] || ICON.check}</svg>`;
+const DEC_ICON = ['layers', 'code', 'graph', 'box'];
+
+/* ============================================================
+   Per-stage detail renderers. Each stage gets its own visual
+   grammar; `data-node` links a card back to its shape.
+   ============================================================ */
+function d0 () {            /* user needs — persona, no categories */
+  return `<div class="dbody">` + THREADS.map((th, i) => `
+    <article class="dcard uc" data-node="0-${i}-">
+      <div class="uc__ico">${icon(th.d.icon)}</div>
+      <div>
+        <div class="uc__need">${esc(th.d.userNeed)}</div>
+        <blockquote class="uc__quote">${esc(th.d.userQuote)}
+          <span class="uc__who">Rachel &middot; renter, 24, moving to Seattle</span>
+        </blockquote>
+      </div>
+    </article>`).join('') + `</div>`;
+}
+
+function d1 () {            /* bot needs — spec-sheet / pipeline theme */
+  const pipe = ['crawl', 'render', 'parse', 'index', 'answer']
+    .map(s => `<span class="pipe__step">${s}</span>`).join('<span class="pipe__arrow">&rarr;</span>');
+  let out = `<div class="dbody"><div class="pipe">${pipe}</div>`;
+  THREADS.forEach((th, i) => th.d.bots.forEach((b, j) => {
+    out += `<article class="dcard bc" data-node="1-${i}-${j}">
+      <div class="bc__name">${esc(b.name)}</div>
+      <ul class="bc__pts">${b.points.map(p => `<li>${esc(p)}</li>`).join('')}</ul>
+    </article>`;
+  }));
+  return out + `</div>`;
+}
+
+function d2 () {            /* categories — four pillars + coverage */
+  return `<div class="dbody">` + THREADS.map((th, i) => `
+    <article class="dcard pc" data-node="2-${i}-">
+      <div class="pc__bar"></div>
+      <div class="pc__in">
+        <div class="pc__name">${esc(th.cat)}</div>
+        <div class="pc__def">= ${esc(th.d.catDef)}</div>
+        <div class="pc__subs">${th.d.catSubs.map(s =>
+          `<div class="pc__sub"><span class="pc__k">${esc(s.k)}</span><span class="pc__v">${esc(s.v)}</span></div>`).join('')}
+        </div>
+        <div class="pc__cov">
+          <div class="pc__covlab">Bot needs this pillar covers</div>
+          <ul>${th.d.catNeeds.map(n => `<li>${esc(n)}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </article>`).join('') + `</div>`;
+}
+
+function d3 () {            /* options — bullets, quiet heading */
+  return `<div class="dbody">` + THREADS.map((th, i) => `
+    <article class="dcard oc" data-node="3-${i}-">
+      <div class="oc__thread">${esc(th.cat)}</div>
+      ${th.d.weighing.map(g => `
+        <div class="og">
+          <div class="og__head">${g.head}</div>
+          ${g.bullets.length ? `<ul class="og__b">${g.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ''}
+          ${g.sub ? `<div class="og__sub">${g.sub.map(s =>
+            `<div class="og__subrow"><span class="og__subk">${s.k}</span><span class="og__subv">${s.v}</span></div>`).join('')}</div>` : ''}
+        </div>`).join('')}
+      <div class="oc__pills">${th.candidates.map(c =>
+        `<span class="oc__pill${c.won ? ' won' : ''}">${esc(c.label)}${c.won ? ' ✓' : ''}</span>`).join('')}</div>
+    </article>`).join('') + `</div>`;
+}
+
+function d4 () {            /* decisions — the payoff */
+  return `<div class="dbody">` + THREADS.map((th, i) => `
+    <article class="dec dcard" data-node="4-${i}-">
+      <div class="dec__top">
+        <span class="dec__ico">${icon(DEC_ICON[i])}</span>
+        <span class="dec__name">${th.dec}</span>
+        <span class="dec__thread">${esc(th.cat)}</span>
+      </div>
+      <div class="dec__in">${th.d.decision.map(g => `
+        <div class="dg">
+          <div class="dg__head">
+            <span class="dg__k">${g.k}</span>${g.v ? `<span class="dg__v">${g.v}</span>` : ''}
+          </div>
+          ${g.proof ? `<ul class="dg__proof">${g.proof.map(p => `<li>${p}</li>`).join('')}</ul>` : ''}
+          ${g.items ? g.items.map(it => `
+            <div class="di"><div class="di__t">${it.t}</div>
+              <ul class="di__b">${it.b.map(b => `<li>${b}</li>`).join('')}</ul></div>`).join('') : ''}
+        </div>`).join('')}
+      </div>
+    </article>`).join('') + `</div>`;
+}
+
+const DETAIL = [d0, d1, d2, d3, d4];
+
+/* ============================================================
+   FUNNEL
+   ============================================================ */
+const W = 1424, H = 880, COL_W = 216;
+const COL_X = [20, 312, 604, 896, 1188];
+const CY = 470, BASE_GAP = 190;
+const SPREAD = [1.0, 0.90, 0.80, 0.72, 0.62];   /* rows converge → the wedge */
+const rowY = (st, i) => CY + (i - 1.5) * BASE_GAP * SPREAD[st];
+
+const ribbon = (x1, y1, t1, x2, y2, t2) => {
+  const c = (x2 - x1) * 0.5;
+  return `M${x1},${y1-t1/2} C${x1+c},${y1-t1/2} ${x2-c},${y2-t2/2} ${x2},${y2-t2/2} ` +
+         `L${x2},${y2+t2/2} C${x2-c},${y2+t2/2} ${x1+c},${y1+t1/2} ${x1},${y1+t1/2} Z`;
+};
+const fo = (x, y, w, h, cls, html, attrs = '') => {
+  const P = 2;
+  return `<foreignObject ${attrs} x="${Math.round(x)-P}" y="${Math.round(y-h/2)-P}" width="${w+P*2}" height="${h+P*2}">` +
+    `<div xmlns="http://www.w3.org/1999/xhtml" class="fo-pad"><div class="${cls}">${html}</div></div></foreignObject>`;
+};
+
+(function renderFunnel () {
+  let ribbons = '', G = [[], [], [], [], []];
+
+  THREADS.forEach((th, i) => {
+    const n = th.bots.length;
+    const y0 = rowY(0,i), y1 = rowY(1,i), y2 = rowY(2,i), y3 = rowY(3,i), y4 = rowY(4,i);
+    const botY = j => n === 1 ? y1 : y1 + (j === 0 ? -44 : 44);
+
+    th.bots.forEach((b, j) => {
+      const src = n === 1 ? y0 : y0 + (j === 0 ? -13 : 13);
+      ribbons += `<path fill="var(--s1)" fill-opacity=".40" d="${ribbon(COL_X[0]+COL_W, src, n===1?52:26, COL_X[1], botY(j), 34)}"/>`;
+    });
+    th.bots.forEach((b, j) => {
+      const tgt = n === 1 ? y2 : y2 + (j === 0 ? -9 : 9);
+      ribbons += `<path fill="var(--s2)" fill-opacity=".44" d="${ribbon(COL_X[1]+COL_W, botY(j), 32, COL_X[2], tgt, n===1?36:18)}"/>`;
+    });
+
+    const m = th.candidates.length, CH = 26, CG = 6;
+    const top = y3 - (m*CH + (m-1)*CG)/2;
+    const candY = k => top + CH/2 + k*(CH+CG);
+
+    th.candidates.forEach((c, k) => {
+      ribbons += `<path fill="${c.won ? 'var(--s3)' : 'var(--ink-3)'}" fill-opacity="${c.won ? '.5' : '.22'}" ` +
+        `d="${ribbon(COL_X[2]+COL_W, y2 + (k-(m-1)/2)*13, 11, COL_X[3], candY(k), 14)}"/>`;
+      /* losers stop at the chip — nothing reaches column 5 */
+      if (c.won) ribbons += `<path fill="var(--s4)" fill-opacity=".55" d="${ribbon(COL_X[3]+COL_W, candY(k), 22, COL_X[4], y4, 30)}"/>`;
+    });
+
+    G[0].push(fo(COL_X[0], y0, COL_W, 132, 'card',
+      `<div class="t">${esc(th.user)}</div><div class="s"><em>${esc(th.userEg)}</em></div>`, `data-node="0-${i}-0"`));
+    th.bots.forEach((b, j) => G[1].push(fo(COL_X[1], botY(j), COL_W, 62, 'card',
+      `<div class="t">${esc(b.t)}</div><div class="s">${esc(b.s)}</div>`, `data-node="1-${i}-${j}"`)));
+    G[2].push(fo(COL_X[2], y2, COL_W, 76, 'card card--cat',
+      `<div class="t">${esc(th.cat)}</div><div class="s">${esc(th.catSub)}</div>`, `data-node="2-${i}-0"`));
+    th.candidates.forEach((c, k) => G[3].push(fo(COL_X[3], candY(k), COL_W, CH,
+      'chip' + (c.won ? ' chip--won' : ''), esc(c.label) + (c.won ? ' ✓' : ''), `data-node="3-${i}-${k}"`)));
+    G[4].push(fo(COL_X[4], y4, COL_W, 76, 'card card--dec',
+      `<div class="t">${th.dec}</div><div class="s">${th.decSub}</div>`, `data-node="4-${i}-0"`));
+  });
+
+  const groups = G.map((nodes, i) => `<g class="stage-g" data-stage="${i}">` +
+    fo(COL_X[i], 52, COL_W, 26, 'sthead', `<i>0${i+1}</i>${esc(STAGES[i].label)}`) + nodes.join('') + `</g>`).join('');
+
+  const lanes = COL_X.map(x => ({ x: x - 14, w: COL_W + 28 }));
+  const rects = cls => lanes.map((l, i) =>
+    `<rect class="${cls}" data-stage="${i}" x="${l.x}" y="34" width="${l.w}" height="${H-50}" rx="14"/>`).join('');
+
+  document.getElementById('funnel').innerHTML =
+    `<svg class="funnel" viewBox="0 0 ${W} ${H}" role="img" aria-label="Funnel narrowing from user needs to shipped requirements">` +
+      `<g>${rects('colbg')}</g><g class="ribbons">${ribbons}</g>${groups}<g>${rects('col-hit')}</g></svg>`;
+
+  wire({ lanes, vw: W, vh: H, topY: 88 });
+})();
+
+/* ============================================================
+   INTERACTION
+   ============================================================ */
+function wire (cfg) {
+  const svgEl = document.querySelector('#funnel svg');
+  const host = document.getElementById('fstage');
+  const ctlEl = document.getElementById('ctl');
+  const panelsEl = document.getElementById('panels');
+  const { lanes, vw, vh, topY } = cfg;
+  let active = null;
+
+  const unlit = () => svgEl.querySelectorAll('foreignObject.is-lit').forEach(n => n.classList.remove('is-lit'));
+  const close = () => { host.querySelector('.dpanel')?.remove(); unlit(); };
+
+  const open = si => {
+    const lane = lanes[si], M = 34, EDGE = 20;
+    const left = si <= 2 ? lane.x + lane.w + M : EDGE;
+    const right = si <= 2 ? vw - EDGE : lane.x - M;
+    const pct = v => (v / vw * 100) + '%';
+
+    const el = document.createElement('div');
+    el.className = 'dpanel';
+    el.style.left = pct(left);
+    el.style.width = pct(right - left);
+    el.style.top = (topY / vh * 100) + '%';
+    el.style.maxHeight = ((vh - topY - EDGE) / vh * 100) + '%';
+    el.innerHTML =
+      `<header class="dpanel__head"><span class="dpanel__num">0${si+1}</span>` +
+      `<span class="dpanel__title">${esc(STAGES[si].label)}</span>` +
+      `<button class="dpanel__x" type="button" data-x>Close</button></header>` + DETAIL[si]();
+
+    el.addEventListener('mouseover', e => {
+      const c = e.target.closest('[data-node]');
+      unlit();
+      if (!c) return;
+      svgEl.querySelectorAll(`foreignObject[data-node^="${c.dataset.node}"]`).forEach(n => n.classList.add('is-lit'));
+    });
+    el.addEventListener('mouseleave', unlit);
+    el.addEventListener('click', e => { if (e.target.closest('[data-x]')) { active = null; paint(); } });
+    host.appendChild(el);
+  };
+
+  const paint = () => {
+    close();
+    if (active === null) { svgEl.removeAttribute('data-focus'); panelsEl.innerHTML = ''; }
+    else if (active === 'all') {
+      svgEl.removeAttribute('data-focus');
+      panelsEl.innerHTML = STAGES.map((s, i) =>
+        `<section class="panel"><header class="panel__head"><span class="panel__num">0${i+1}</span>` +
+        `<h3 class="panel__title">${esc(s.label)}</h3></header>${DETAIL[i]()}</section>`).join('');
+    } else {
+      svgEl.setAttribute('data-focus', String(active));
+      panelsEl.innerHTML = '';
+      open(active);
+    }
+    [...ctlEl.querySelectorAll('[data-stage]')].forEach(b =>
+      b.setAttribute('aria-pressed', String(active !== 'all' && Number(b.dataset.stage) === active)));
+    ctlEl.querySelector('[data-all]').setAttribute('aria-pressed', String(active === 'all'));
+  };
+
+  ctlEl.innerHTML = STAGES.map((s, i) =>
+    `<button class="btn" type="button" data-stage="${i}" aria-pressed="false">0${i+1} ${esc(s.label)}</button>`).join('') +
+    `<button class="btn" type="button" data-all aria-pressed="false">Show all</button>` +
+    `<span class="ctl__hint">or click any column</span>`;
+
+  ctlEl.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.hasAttribute('data-all')) active = active === 'all' ? null : 'all';
+    else { const i = Number(b.dataset.stage); active = active === i ? null : i; }
+    paint();
+  });
+  svgEl.addEventListener('click', e => {
+    const h = e.target.closest('.col-hit'); if (!h) return;
+    const i = Number(h.dataset.stage);
+    active = active === i ? null : i;
+    paint();
+  });
+  svgEl.addEventListener('mouseover', e => {
+    const h = e.target.closest('.col-hit');
+    if (h) svgEl.dataset.hover = h.dataset.stage; else delete svgEl.dataset.hover;
+  });
+  svgEl.addEventListener('mouseleave', () => { delete svgEl.dataset.hover; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && active !== null) { active = null; paint(); } });
+
+  paint();
+}
+</script>
+</body>
+</html>
