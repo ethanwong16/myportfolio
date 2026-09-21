@@ -50,6 +50,23 @@ body.cs {
 .cs-nav__mark span { color: var(--gold); }
 
 /* ------------------------------------------------------------
+   DISCLAIMER — a slim redaction notice, top of page, before the
+   hero. Text lives in the render script (reuses footer.email so
+   there's one place to update the contact address).
+   ------------------------------------------------------------ */
+.cs-disclaimer {
+  padding: .75rem var(--gutter);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--ink-3);
+  text-align: center;
+  background: color-mix(in srgb, var(--paper-2) 55%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+.cs-disclaimer a { color: var(--ink-2); }
+.cs-disclaimer a:hover { color: var(--gold); }
+
+/* ------------------------------------------------------------
    HERO / HEADER
    ------------------------------------------------------------ */
 .cs-hero {

@@ -212,6 +212,11 @@
     document.title = C.meta.title + ' — Ethan Wong';
 
     mount.innerHTML = '' +
+      '<div class="cs-disclaimer">' +
+        'Some details in this case study have been redacted for privacy and confidentiality. ' +
+        '<a href="mailto:' + esc(C.footer.email) + '">Contact me</a> with any questions about my work or experience.' +
+      '</div>' +
+
       '<header class="cs-hero">' +
         '<div class="u-wrap">' +
           '<div class="cs-tags">' + C.meta.tags.map(function (tag) {
