@@ -156,8 +156,6 @@ window.CASE_STUDY = {
       },
       expand: {
         body: [
-          'Two ways to look at the same change. Zoomed in, it’s a page-source problem: the facts a bot needs are scattered across a dozen HTML tags, in whatever format each tag happens to use. Zoomed out, it’s a graph problem: that scattering has no shared structure at all, so a bot has to reconstruct one from nothing.',
-          'Consolidating both into a single, typed JSON-LD tree in <head> fixes both problems with one move — and the three things that improve are the same three things bots and agentic search systems actually need: semantic richness, structured topology, and rendering ease.',
           'Three phases, each one a step up from the last: ship the markup itself, then build the guardrails to trust it at scale, then invest in the tooling that collapses the whole authoring lifecycle from weeks to days.',
           {
             note: 'Phase 1 — MVP: Enhanced structured markup, rolled out across core listing pages',
@@ -171,7 +169,6 @@ window.CASE_STUDY = {
             note: 'Phase 3 — Rapid Iteration & Experimentation: Infrastructure for a faster SDLC, without losing the review gates',
             body: 'Solve for the complexity of mapping user research into tangible technical schema requirements, and align that same schema across different teams’ codebases and templated page variants — a centralized structured markup repo, a schema playground for PMs to self-serve, schema build agents that turn natural language into markup, and an auto dispatcher that attempts ingestion into subscribed codebases so devs just review instead of filing manual change requests.'
           },
-          'Two views into how the phases above actually run day to day: the release workflow from prototyping through development to QA & release, and the day-to-day loop between the SEO agent, the bot, and the user-facing experience.',
           { quote: 'What used to take 4–5 weeks end to end now takes 4–8 days.' }
         ]
         // funnel: '<key>',   // an interactive decision funnel — see field
