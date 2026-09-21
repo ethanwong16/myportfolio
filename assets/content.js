@@ -80,6 +80,16 @@ window.CONTENT = {
     }
   ],
 
+  /* ---- case studies ---- */
+  caseStudies: [
+    {
+      title: 'Optimizing For AI Search Agents – Structured Markup',
+      summary: 'A case study on structured markup product strategy & execution. Unlocks rich semantic context for agentic search systems.',
+      tags: ['0→1', 'AI Search', 'SEO/GEO'],
+      href: 'case-studies/zsm-2.html'
+    }
+  ],
+
   /* ---- earlier work, behind a toggle ---- */
   archiveLabel: 'Earlier work',
   archive: [
