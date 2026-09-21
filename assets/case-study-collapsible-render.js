@@ -40,7 +40,7 @@
           (b.cite ? '<cite>' + esc(b.cite) + '</cite>' : '') + '</blockquote>';
       }
       if (b.note) {
-        return '<details class="cs-note"><summary>' + esc(b.note) + '</summary>' +
+        return '<details class="cs-note" open><summary>' + esc(b.note) + '</summary>' +
           '<div class="cs-note__body">' + esc(b.body) + '</div></details>';
       }
       return '';
@@ -176,7 +176,7 @@
       esc(ex.stackLabel || 'Stack') + '</h3>' + stack(ex.stack);
 
     if (!inner) return '';
-    return '<details class="cs-expand">' +
+    return '<details class="cs-expand" open>' +
       '<summary class="cs-expand__toggle">' +
         '<span class="cs-expand__icon" aria-hidden="true"></span>' +
         '<span>' + esc(ex.label || 'Show diagrams & write-up') + '</span>' +
@@ -208,6 +208,7 @@
   window.renderCollapsibleCaseStudy = function (mount) {
     var C = window.CASE_STUDY;
     var t = toc(C.sections);
+    var hasSolution = C.sections.some(function (s) { return s.id === 'solution-decisioning'; });
 
     document.title = C.meta.title + ' — Ethan Wong';
 
@@ -227,10 +228,13 @@
           '<dl class="cs-facts">' + C.meta.facts.map(function (f) {
             return '<div class="cs-fact"><dt>' + esc(f.label) + '</dt><dd>' + esc(f.value) + '</dd></div>';
           }).join('') + '</dl>' +
-          (C.meta.links && C.meta.links.length ? '<div class="cs-hero__links">' + C.meta.links.map(function (l) {
-            return '<a href="' + esc(l.href) + '" target="_blank" rel="noopener">' + esc(l.label) +
-              '<span aria-hidden="true">&#8599;</span></a>';
-          }).join('') + '</div>' : '') +
+          (hasSolution || (C.meta.links && C.meta.links.length) ? '<div class="cs-hero__links">' +
+            (hasSolution ? '<a href="#solution-decisioning">See the solution<span aria-hidden="true">&#8595;</span></a>' : '') +
+            (C.meta.links ? C.meta.links.map(function (l) {
+              return '<a href="' + esc(l.href) + '" target="_blank" rel="noopener">' + esc(l.label) +
+                '<span aria-hidden="true">&#8599;</span></a>';
+            }).join('') : '') +
+          '</div>' : '') +
         '</div>' +
       '</header>' +
 
@@ -238,7 +242,7 @@
         t.rail +
         '<div class="cs-content">' +
           t.mobile +
-          '<div class="cs-expand-all"><button type="button" class="cs-expand-all__btn" data-expand-all aria-expanded="false">Expand all sections</button></div>' +
+          '<div class="cs-expand-all"><button type="button" class="cs-expand-all__btn" data-expand-all aria-expanded="true">Collapse all sections</button></div>' +
           '<div class="cs-sections">' + C.sections.map(section).join('') + '</div>' +
         '</div>' +
       '</div>' +

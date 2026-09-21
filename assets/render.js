@@ -58,12 +58,15 @@
     }).join('');
 
     return '' +
-      '<article class="card" data-reveal style="--i:' + i + '">' +
+      '<article class="card card--linked" data-reveal style="--i:' + i + '">' +
         '<header class="card__head"><div class="card__tags">' + tags + '</div></header>' +
         '<h3 class="card__title">' + esc(item.title) + '</h3>' +
         '<p class="card__org">' + esc(item.summary) + '</p>' +
         '<div class="card__links">' +
-          '<a class="card__link" href="' + esc(item.href) + '">Read case study<span aria-hidden="true">&#8594;</span></a>' +
+          /* stretched over the whole card (see .card--linked in
+             layout.css) — the only link in the card, so the card
+             reads and behaves as one click target, not two */
+          '<a class="card__link card__link--stretched" href="' + esc(item.href) + '">Read case study<span aria-hidden="true">&#8594;</span></a>' +
         '</div>' +
       '</article>';
   }

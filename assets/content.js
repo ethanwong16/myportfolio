@@ -17,10 +17,11 @@ window.CONTENT = {
     'student-facing resources to agentic tooling adopted across large orgs.',
 
   actions: [
-    { label: 'Résumé',   href: 'Ethan_Wong_Resume_2026.pdf', kind: 'primary' },
-    { label: 'Work',     href: '#work',    kind: 'ghost' },
-    { label: 'About',    href: '#about',   kind: 'ghost' },
-    { label: 'Contact',  href: '#contact', kind: 'ghost' }
+    { label: 'Résumé',       href: 'Ethan_Wong_Resume_2026.pdf', kind: 'primary' },
+    { label: 'Work',         href: '#work',          kind: 'ghost' },
+    { label: 'Case Studies', href: '#case-studies',  kind: 'ghost' },
+    { label: 'About',        href: '#about',         kind: 'ghost' },
+    { label: 'Contact',      href: '#contact',       kind: 'ghost' }
   ],
 
   /* ---- current work ---- */

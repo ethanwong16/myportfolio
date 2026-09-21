@@ -2,9 +2,10 @@
    shards.js — the drifting-shard field and the ripple.
 
    Cold: loose colourless pieces drift and rotate, unresolved.
-   Ripple: a wave leaves the word "life" and travels outward. As
-   it reaches each piece, that piece gains colour and tweens into
-   its slot in a built shape. Shards piecing together into solids.
+   Ripple: a wave leaves the word "life" and travels outward. As it
+   reaches each piece, that piece fades from cold grey to its warm
+   colour — position, drift and rotation are untouched throughout;
+   only colour is ever animated by the wave.
 
    The wave radius is published to CSS as --r on the hero, so the
    clipped warm overlay and the canvas share one clock exactly.
@@ -20,7 +21,6 @@
   /* ---------- small maths ---------- */
   var lerp       = function (a, b, t) { return a + (b - a) * t; };
   var clamp01    = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
-  var easeOutCub = function (t) { return 1 - Math.pow(1 - t, 3); };
   var easeOutQnt = function (t) { return 1 - Math.pow(1 - t, 5); };
   var easeInOut  = function (t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
 
@@ -162,7 +162,6 @@
     this.cfg = cfg;
     this.rand = rng(cfg.seed || 7);
     this.shards = [];
-    this.groups = [];
     this.t0 = performance.now();
     this.wave = { on: false, t: 0, r: 0, max: 0, ox: 0, oy: 0 };
     this.scrollY = 0;
@@ -170,14 +169,15 @@
     this.running = false;
   }
 
-  /* Lay out the target shapes across the hero box, then explode
-     every piece to a random start. Each piece already *is* the
-     piece it will become — the ripple only moves it home. */
+  /* Lay out the pieces of each shape across the hero box, scattered
+     around where that shape would have sat, then explode every piece
+     outward to its floating start. Pieces never assemble — the ripple
+     only brings their colour in, so they keep drifting exactly as
+     they were laid out here for as long as the hero is on screen. */
   ShardField.prototype.layout = function (w, h) {
     var cfg = this.cfg, R = this.rand, self = this;
     this.w = w; this.h = h;
     this.shards = [];
-    this.groups = [];
 
     var small = Math.min(w, h);
 
@@ -198,13 +198,10 @@
       var cx    = w * spec.x;
       var cy    = h * spec.y;
 
-      var group = { cx: cx, cy: cy, phase: R() * TAU, bob: spec.bob != null ? spec.bob : 1 };
-      self.groups.push(group);
-
       polys.forEach(function (poly, pi) {
         var c = polyCentroid(poly);
 
-        /* home transform */
+        /* anchor each piece near where its shape would have sat */
         var tx = cx + c[0] * size;
         var ty = cy + c[1] * size;
 
@@ -212,16 +209,13 @@
            happen about the piece, not about the shape's origin */
         var local = poly.map(function (p) { return [p[0] - c[0], p[1] - c[1]]; });
 
-        /* scattered start — pushed outward from home, spun, shrunk */
+        /* scattered start — pushed outward from the anchor, spun, shrunk */
         var ang  = R() * TAU;
         var dist = small * (cfg.scatter[0] + R() * (cfg.scatter[1] - cfg.scatter[0]));
 
         self.shards.push({
           poly:  local,
-          group: group,
           size:  size,
-
-          hx: tx, hy: ty, hrot: 0, hscale: 1,
 
           sx: tx + Math.cos(ang) * dist,
           sy: ty + Math.sin(ang) * dist,
@@ -235,9 +229,8 @@
 
           fill: cfg.palette[(gi + pi) % cfg.palette.length],
 
-          /* filled in when the wave arrives */
-          t: 0, started: false, startAt: 0,
-          fx: 0, fy: 0, frot: 0, fscale: 0
+          /* set when the wave arrives, to time the colour fade-in */
+          started: false, startAt: 0
         });
       });
     });
@@ -278,7 +271,7 @@
     this.wave.on = true;
     this.wave.t = 1;
     this.wave.r = this.wave.max = Math.hypot(this.w, this.h);
-    this.shards.forEach(function (s) { s.started = true; s.t = 1; });
+    this.shards.forEach(function (s) { s.started = true; });
   };
 
   ShardField.prototype.draw = function (now) {
@@ -295,37 +288,25 @@
       if (this.onWave) this.onWave(wave.r, wave.t);
     }
 
-    var i, s, p, tt, x, y, rot, sc, alpha;
+    var i, s, p, tt, x, y, rot, sc, alpha, d;
 
     for (i = 0; i < this.shards.length; i++) {
       s = this.shards[i];
 
-      /* has the wavefront reached this piece yet? */
+      /* has the wavefront reached this piece yet? once it has, the
+         piece only gains colour — it keeps drifting exactly as before,
+         never assembling into its shape's home position */
       if (wave.on && !s.started) {
-        var d = Math.hypot(s.sx - wave.ox, s.sy - wave.oy);
+        d = Math.hypot(s.sx - wave.ox, s.sy - wave.oy);
         if (wave.r >= d) {
-          p = this.loosePos(s, time);
-          s.fx = p.x; s.fy = p.y; s.frot = p.rot; s.fscale = p.scale;
           s.started = true;
           s.startAt = now;
         }
       }
 
-      if (!s.started) {
-        p = this.loosePos(s, time);
-        x = p.x; y = p.y; rot = p.rot; sc = p.scale;
-        tt = 0;
-      } else {
-        tt = clamp01((now - s.startAt) / cfg.assembleMs);
-        var e = easeOutCub(tt);
-        /* once home, the whole shape breathes gently as one */
-        var g = s.group;
-        var bob = Math.sin(time * 0.35 + g.phase) * 4 * g.bob * e;
-        x   = lerp(s.fx, s.hx, e);
-        y   = lerp(s.fy, s.hy, e) + bob;
-        rot = lerp(s.frot, s.hrot, e);
-        sc  = lerp(s.fscale, s.hscale, e);
-      }
+      p = this.loosePos(s, time);
+      x = p.x; y = p.y; rot = p.rot; sc = p.scale;
+      tt = s.started ? clamp01((now - s.startAt) / cfg.fadeMs) : 0;
 
       ctx.save();
       ctx.translate(x, y + this.scrollY * cfg.parallax);
@@ -392,7 +373,8 @@
       strokeAlphaWarm: 0.35,
       fillAlpha: 1,
       waveMs: 1150,
-      assembleMs: 950,
+      fadeMs: 950,
+      litMs: 1300,
       parallax: 0,
       autoFireMs: 3000,
       narrowAt: 640,
@@ -501,9 +483,16 @@
         return;
       }
 
-      measure();
-      field.trigger(origin.x, origin.y, origin.max);
-      setTimeout(finish, cfg.waveMs + cfg.assembleMs + 120);
+      /* "life" gets its colour first and holds there a beat, on its
+         own fast transition, before the wave actually spreads —
+         a beat of anticipation so the moment reads as deliberate,
+         not just a click that happens to cause a color change. */
+      lifeEl.classList.add('is-lit');
+      setTimeout(function () {
+        measure();
+        field.trigger(origin.x, origin.y, origin.max);
+      }, cfg.litMs);
+      setTimeout(finish, cfg.litMs + cfg.waveMs + cfg.fadeMs + 120);
     }
 
     /* --- input ---
@@ -547,7 +536,7 @@
       boot();
     }
 
-    /* --- resize: relayout, but never un-assemble a finished field --- */
+    /* --- resize: relayout, but never revert an already-warm field back to cold --- */
     var rt;
     global.addEventListener('resize', function () {
       clearTimeout(rt);
