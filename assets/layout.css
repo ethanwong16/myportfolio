@@ -119,6 +119,8 @@ html.is-warm .nav {
   white-space: nowrap;
 }
 
+.card__tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+
 .card__period {
   font-size: var(--step--1);
   color: var(--ink-3);

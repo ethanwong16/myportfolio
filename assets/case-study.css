@@ -1,0 +1,654 @@
+/* ============================================================
+   case-study.css — long-form product case study template.
+
+   Deliberately quieter than kinetic.css: this is a read, not a
+   reveal. Same palette and tokens as the rest of the site, but
+   restrained weight, no motion beyond hover/focus, and a measure
+   tuned for paragraphs instead of headlines. Self-contained —
+   depends only on tokens.css, not on layout.css/kinetic.css or
+   the ripple/hero machinery.
+   ============================================================ */
+
+body.cs {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.cs h1, .cs h2, .cs h3, .cs h4,
+.cs .cs-mark, .cs .cs-hero__title {
+  font-family: 'Sora', system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------
+   TOP BAR — slim, always visible, no ripple/reveal choreography
+   ------------------------------------------------------------ */
+.cs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .9rem var(--gutter);
+  font-size: var(--step--1);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.cs-nav__back {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  text-decoration: none;
+  color: var(--ink-2);
+  letter-spacing: .02em;
+  transition: color .25s ease, gap .25s var(--ease-out);
+}
+.cs-nav__back:hover { color: var(--gold); gap: .75rem; }
+.cs-nav__mark { color: var(--ink-3); }
+.cs-nav__mark span { color: var(--gold); }
+
+/* ------------------------------------------------------------
+   DISCLAIMER — a slim redaction notice, top of page, before the
+   hero. Text lives in the render script (reuses footer.email so
+   there's one place to update the contact address).
+   ------------------------------------------------------------ */
+.cs-disclaimer {
+  padding: .75rem var(--gutter);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--ink-3);
+  text-align: center;
+  background: color-mix(in srgb, var(--paper-2) 55%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+.cs-disclaimer a { color: var(--ink-2); }
+.cs-disclaimer a:hover { color: var(--gold); }
+
+/* ------------------------------------------------------------
+   HERO / HEADER
+   ------------------------------------------------------------ */
+.cs-hero {
+  padding-block: clamp(3rem, 8vw, 6rem) clamp(2.5rem, 6vw, 4rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.cs-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
+.cs-tag {
+  display: inline-block;
+  padding: .3em .75em;
+  border-radius: 999px;
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold-soft);
+  background: var(--gold-wash);
+  white-space: nowrap;
+}
+
+.cs-hero__title {
+  font-size: var(--step-3);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.05;
+  max-width: 20ch;
+}
+
+.cs-hero__summary {
+  margin-top: 1.25rem;
+  font-size: var(--step-1);
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 48ch;
+}
+
+.cs-facts {
+  margin-top: clamp(2rem, 5vw, 3rem);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem 2rem;
+}
+@media (min-width: 640px) { .cs-facts { grid-template-columns: repeat(4, 1fr); } }
+.cs-fact dt {
+  font-size: var(--step--1);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: .35rem;
+}
+.cs-fact dd { margin: 0; font-weight: 600; letter-spacing: -.01em; }
+
+.cs-hero__links { margin-top: clamp(1.75rem, 4vw, 2.5rem); display: flex; flex-wrap: wrap; gap: 1.5rem; }
+.cs-hero__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: var(--step--1);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  border-bottom: 1px solid var(--gold-soft);
+  padding-bottom: .15rem;
+  transition: color .25s ease, border-color .25s ease, gap .25s var(--ease-out);
+}
+.cs-hero__links a:hover { color: var(--gold); border-color: var(--gold); gap: .6rem; }
+
+/* ------------------------------------------------------------
+   BODY LAYOUT — sticky on-page nav + reading column
+   ------------------------------------------------------------ */
+.cs-body {
+  padding-block: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 8vw, 6rem);
+  display: grid;
+  gap: 3rem;
+}
+@media (min-width: 960px) {
+  .cs-body { grid-template-columns: 200px minmax(0, 1fr); align-items: start; }
+}
+
+.cs-toc {
+  position: sticky;
+  top: 4.5rem;
+  display: none;
+}
+@media (min-width: 960px) { .cs-toc { display: block; } }
+.cs-toc__label {
+  font-size: var(--step--1);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: .9rem;
+}
+.cs-toc ol { display: grid; gap: .6rem; counter-reset: toc; }
+.cs-toc li { counter-increment: toc; }
+.cs-toc a {
+  display: flex;
+  gap: .6rem;
+  text-decoration: none;
+  color: var(--ink-2);
+  font-size: var(--step--1);
+  line-height: 1.4;
+  transition: color .2s ease;
+}
+.cs-toc a::before {
+  content: counter(toc, decimal-leading-zero);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.cs-toc a:hover { color: var(--gold); }
+
+/* mobile on-page nav: collapsible, sits above section 01 */
+.cs-toc-mobile { display: block; margin-bottom: .5rem; }
+@media (min-width: 960px) { .cs-toc-mobile { display: none; } }
+.cs-toc-mobile summary {
+  cursor: pointer;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .6em 1em;
+  border-radius: 999px;
+  border: 1px dashed var(--line);
+  font-size: var(--step--1);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.cs-toc-mobile summary::-webkit-details-marker { display: none; }
+.cs-toc-mobile[open] summary { border-color: var(--gold); color: var(--ink); }
+.cs-toc-mobile ol { margin-top: 1rem; padding-left: 1.1rem; display: grid; gap: .5rem; }
+.cs-toc-mobile a { color: var(--ink-2); text-decoration: none; font-size: var(--step--1); }
+.cs-toc-mobile a:hover { color: var(--gold); }
+
+.cs-sections { display: grid; gap: clamp(3.5rem, 8vw, 5.5rem); max-width: var(--measure); }
+
+/* ------------------------------------------------------------
+   SECTION HEADING — reuses the numbered-title convention from
+   the homepage bands, so a case study still reads as part of
+   the same site.
+   ------------------------------------------------------------ */
+.cs-section {
+  scroll-margin-top: 6rem;
+}
+.cs-section__title {
+  display: flex;
+  align-items: baseline;
+  gap: .9rem;
+  font-size: var(--step-2);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  margin-bottom: 1.25rem;
+}
+.cs-section__num {
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: .1em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.cs-prose { display: grid; gap: 1.1rem; }
+.cs-prose p {
+  font-size: var(--step-0);
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.cs-prose strong { color: var(--ink); font-weight: 600; }
+
+/* pull quote, used sparingly for a persona voice or a decisive line */
+.cs-quote {
+  margin: .25rem 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--gold-soft);
+  font-size: var(--step-1);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.cs-quote cite { display: block; margin-top: .6rem; font-size: var(--step--1); font-weight: 400; color: var(--ink-3); font-style: normal; }
+
+/* ------------------------------------------------------------
+   ANNOTATIONS — "behind the decision" asides. Native <details>
+   so the disclosure works with zero JS and reads identically on
+   mobile and desktop; no floating-margin positioning to fight.
+   ------------------------------------------------------------ */
+.cs-note {
+  margin-block: .35rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--paper-2) 55%, transparent);
+}
+.cs-note summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .75em 1.1em;
+  font-size: var(--step--1);
+  letter-spacing: .02em;
+  color: var(--gold);
+  font-weight: 600;
+}
+.cs-note summary::-webkit-details-marker { display: none; }
+.cs-note summary::before {
+  content: "+";
+  display: inline-grid;
+  place-items: center;
+  width: 1.2em; height: 1.2em;
+  border-radius: 50%;
+  border: 1px solid var(--gold-soft);
+  font-weight: 400;
+  transition: transform .3s var(--ease-out);
+}
+.cs-note[open] summary::before { content: "\2212"; }
+.cs-note__body {
+  padding: 0 1.1em 1em calc(1.1em + 1.2em + .6em);
+  font-size: var(--step--1);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* ------------------------------------------------------------
+   PERSONAS
+   ------------------------------------------------------------ */
+.cs-personas { display: grid; gap: 1.1rem; }
+@media (min-width: 700px) { .cs-personas { grid-template-columns: repeat(2, 1fr); } }
+.cs-persona {
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.cs-persona__name { font-size: var(--step-0); font-weight: 700; letter-spacing: -.01em; }
+.cs-persona__role { color: var(--ink-3); font-size: var(--step--1); margin-top: .15rem; }
+.cs-persona__quote {
+  margin-top: .9rem;
+  font-size: var(--step--1);
+  color: var(--ink-2);
+  line-height: 1.55;
+  font-style: italic;
+}
+.cs-persona__needs { margin-top: 1rem; display: grid; gap: .4rem; }
+.cs-persona__needs li {
+  position: relative;
+  padding-left: 1.2rem;
+  font-size: var(--step--1);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.cs-persona__needs li::before {
+  content: "";
+  position: absolute; left: 0; top: .6em;
+  width: .45rem; height: 1px;
+  background: var(--gold);
+}
+
+/* ------------------------------------------------------------
+   GOALS
+   ------------------------------------------------------------ */
+.cs-goals { display: grid; gap: .9rem; }
+.cs-goal {
+  display: flex;
+  gap: .9rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+}
+.cs-goal:first-child { border-top: none; padding-top: 0; }
+.cs-goal__mark {
+  flex: none;
+  width: 1.6rem; height: 1.6rem;
+  border-radius: 50%;
+  border: 1px solid var(--gold-soft);
+  color: var(--gold);
+  display: grid;
+  place-items: center;
+  font-size: .7rem;
+  font-weight: 700;
+}
+.cs-goal__label { font-weight: 600; letter-spacing: -.01em; }
+.cs-goal__detail { margin-top: .3rem; color: var(--ink-2); font-size: var(--step--1); line-height: 1.55; }
+
+/* ------------------------------------------------------------
+   ROAD — each phase is a house scene on a rounded card, alternating
+   left/right of a winding road so the route loops into an S-curve
+   down the page instead of a straight staircase, ending at the
+   destination called out at the bottom. Houses are drawn
+   isometrically the same way the schema-viz building is —
+   flat-filled front/side/(top) faces, no stroke, tone contrast
+   doing the work of reading as 3D — see .cs-house__f below. The
+   full write-up for each phase lives separately, in .cs-road-detail.
+   ------------------------------------------------------------ */
+.cs-road {
+  --road-rise: clamp(5rem, 13vw, 7.5rem);
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+.cs-road-list { display: grid; }
+.cs-road-stop { padding-top: var(--road-rise); }
+.cs-road-stop:first-child { padding-top: 1.9rem; }
+
+/* the start pin, above the first house */
+.cs-road-start {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .6rem;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.cs-road-start::before {
+  content: "";
+  width: .5rem; height: .5rem;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+/* the curved stretch of asphalt between two houses: a thick grey
+   base road with a dashed gold lane line down the middle, spanning
+   the full width so it can bulge toward whichever side the next
+   house sits on. --mirror flips the same curve horizontally for
+   the opposite direction, so only one path needs to be drawn. */
+.cs-road-stop__link {
+  display: block;
+  width: 100%;
+  height: var(--road-rise);
+}
+.cs-road-stop__link svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.cs-road-stop__link--mirror svg { transform: scaleX(-1); }
+.cs-road-stop__link-base {
+  fill: none;
+  stroke: var(--ink-2);
+  opacity: .28;
+  stroke-width: 26;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.cs-road-stop__link-lane {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 9 10;
+  vector-effect: non-scaling-stroke;
+}
+
+/* a house scene on its own rounded card, sitting on the road.
+   Alternates which edge it hugs to trace the S-curve: --right stops
+   sit at the right edge, everything else (default/--left) at the
+   left, matching the road link's loop direction above each stop. */
+.cs-road-stop__scene {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.1rem clamp(1rem, 3vw, 1.6rem);
+  padding: 1.1rem clamp(1.1rem, 3vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--paper-2) 40%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 4%, transparent);
+  max-width: clamp(20rem, 62vw, 34rem);
+}
+/* bounded width + auto margin, not justify-content, is what actually
+   moves the block — a full-width flex row with a flex:1 label fills
+   the line before justify-content gets a chance to act */
+.cs-road-stop--right .cs-road-stop__scene { margin-left: auto; }
+.cs-road-stop--right .cs-road-stop__label { text-align: right; }
+.cs-road-stop--right .cs-road-stop__highlights { justify-content: flex-end; }
+
+.cs-road-stop__house {
+  flex: none;
+  width: clamp(78px, 9vw, 118px);
+}
+.cs-road-scene__svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* isometric house faces — flat fills only, matching the schema-viz
+   building's convention (front lightest, top/roof-front next,
+   side/roof-side darkest). t1/t2/t3 vary the neighborhood scene's
+   three houses for depth; `gold` is the finish house. */
+.cs-house__f--wall-front.cs-house--t1 { fill: var(--gold-soft); }
+.cs-house__f--wall-side.cs-house--t1  { fill: var(--gold); }
+.cs-house__f--roof-front.cs-house--t1 { fill: var(--gold); }
+.cs-house__f--roof-side.cs-house--t1  { fill: #8C6013; }
+.cs-house__f--door.cs-house--t1 { fill: #5E3B08; }
+.cs-house__f--win.cs-house--t1 { fill: rgba(35, 26, 12, .26); }
+
+.cs-house__f--wall-front.cs-house--t2 { fill: var(--gold-bright); }
+.cs-house__f--wall-side.cs-house--t2  { fill: var(--gold); }
+.cs-house__f--roof-front.cs-house--t2 { fill: var(--clay); }
+.cs-house__f--roof-side.cs-house--t2  { fill: #7A4A28; }
+.cs-house__f--door.cs-house--t2 { fill: #5E3B08; }
+.cs-house__f--win.cs-house--t2 { fill: rgba(35, 26, 12, .26); }
+
+.cs-house__f--wall-front.cs-house--t3 { fill: var(--paper-2); }
+.cs-house__f--wall-side.cs-house--t3  { fill: var(--line); }
+.cs-house__f--roof-front.cs-house--t3 { fill: var(--gold-soft); }
+.cs-house__f--roof-side.cs-house--t3  { fill: var(--gold); }
+.cs-house__f--door.cs-house--t3 { fill: #6E4B0E; }
+.cs-house__f--win.cs-house--t3 { fill: rgba(35, 26, 12, .22); }
+
+.cs-house__f--wall-front.cs-house--gold { fill: var(--gold-wash); }
+.cs-house__f--wall-side.cs-house--gold  { fill: var(--gold-soft); }
+.cs-house__f--roof-front.cs-house--gold { fill: var(--gold-bright); }
+.cs-house__f--roof-side.cs-house--gold  { fill: var(--gold); }
+.cs-house__f--door.cs-house--gold { fill: #5E3B08; }
+.cs-house__f--win.cs-house--gold { fill: rgba(255, 250, 240, .55); }
+
+.cs-house__fence { stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; }
+.cs-road-scene__spark { fill: var(--gold); }
+
+.cs-road-stop__label { min-width: 0; flex: 1 1 14rem; }
+.cs-road-stop__tag {
+  display: block;
+  font-size: var(--step--1);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.cs-road-stop__title { margin-top: .2rem; font-size: var(--step-0); font-weight: 700; letter-spacing: -.01em; }
+.cs-road-stop__highlights { margin-top: .5rem; display: flex; flex-wrap: wrap; gap: .4rem .5rem; }
+.cs-road-stop__highlights li {
+  font-size: var(--step--1);
+  color: var(--ink-2);
+  padding: .15rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.cs-road-finish { padding-top: var(--road-rise); }
+.cs-road-finish__scene {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.1rem clamp(1rem, 3vw, 1.6rem);
+  padding: 1.1rem clamp(1.1rem, 3vw, 1.5rem);
+  border: 1px solid var(--gold-soft);
+  border-radius: 16px;
+  background: var(--gold-wash);
+  max-width: clamp(20rem, 62vw, 34rem);
+}
+.cs-road-finish--right .cs-road-finish__scene { margin-left: auto; }
+.cs-road-finish--right .cs-road-finish__label { text-align: right; }
+.cs-road-finish__house { flex: none; width: clamp(96px, 11vw, 140px); }
+.cs-road-finish__label { min-width: 0; }
+.cs-road-finish__tag {
+  display: block;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.cs-road-finish__copy { margin-top: .15rem; font-size: var(--step-0); font-weight: 600; color: var(--ink); }
+
+@media (max-width: 640px) {
+  .cs-road-stop__link { display: none; }
+  .cs-road-stop:first-child { padding-top: 0; }
+  .cs-road-stop { padding-top: .9rem; }
+  .cs-road-stop__scene { max-width: none; }
+  .cs-road-stop--right .cs-road-stop__scene { margin-left: 0; }
+  .cs-road-stop--right .cs-road-stop__label,
+  .cs-road-stop--right .cs-road-stop__highlights { text-align: left; justify-content: flex-start; }
+  .cs-road-finish { padding-top: .9rem; }
+  .cs-road-finish__scene { max-width: none; }
+  .cs-road-finish--right .cs-road-finish__scene { margin-left: 0; }
+  .cs-road-finish--right .cs-road-finish__label { text-align: left; }
+}
+
+/* ------------------------------------------------------------
+   ROAD DETAIL — the full phase write-ups, as plain paragraphs
+   that flow into each other beneath the road infographic. No
+   card/box styling here on purpose; it reads as narrative.
+   ------------------------------------------------------------ */
+.cs-road-detail p { color: var(--ink-2); font-size: var(--step-0); line-height: 1.6; max-width: 60ch; }
+.cs-road-detail p + p { margin-top: 1.1rem; }
+.cs-road-detail p strong { color: var(--ink); }
+.cs-road-detail__bullets { margin: .6rem 0 1.1rem; display: grid; gap: .4rem; }
+.cs-road-detail__bullets li {
+  position: relative;
+  padding-left: 1.2rem;
+  font-size: var(--step--1);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.cs-road-detail__bullets li::before {
+  content: "";
+  position: absolute; left: 0; top: .58em;
+  width: .45rem; height: 1px;
+  background: var(--gold);
+}
+
+/* ------------------------------------------------------------
+   DEEP DIVE — the feature-level walkthrough gets a framed block
+   to set it apart from the surrounding narrative.
+   ------------------------------------------------------------ */
+.cs-deepdive {
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--paper-2) 40%, transparent);
+  display: grid;
+  gap: 1.1rem;
+}
+.cs-deepdive__frame {
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  background: var(--paper);
+}
+
+/* ------------------------------------------------------------
+   STACK CHIPS
+   ------------------------------------------------------------ */
+.cs-stack { margin-top: .5rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+.cs-chip {
+  padding: .35em .8em;
+  border-radius: 8px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  font-size: .78rem;
+  color: var(--ink-2);
+  letter-spacing: .01em;
+}
+
+/* ------------------------------------------------------------
+   OUTCOMES / METRICS
+   ------------------------------------------------------------ */
+.cs-metrics { display: grid; gap: 1.25rem; grid-template-columns: repeat(2, 1fr); margin-bottom: 1.5rem; }
+@media (min-width: 640px) { .cs-metrics { grid-template-columns: repeat(4, 1fr); } }
+.cs-metric__value {
+  font-size: var(--step-2);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.cs-metric__label { margin-top: .3rem; font-size: var(--step--1); color: var(--ink-3); line-height: 1.4; }
+
+/* ------------------------------------------------------------
+   FOOTER NAV — back to work / next case study / contact
+   ------------------------------------------------------------ */
+.cs-foot {
+  border-top: 1px solid var(--line);
+  padding-block: clamp(2.5rem, 6vw, 4rem);
+  display: grid;
+  gap: 2rem;
+}
+.cs-foot__cta { font-size: var(--step-1); color: var(--ink-2); max-width: 40ch; }
+.cs-foot__mail {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: clamp(1.3rem, 4.5vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  text-decoration: none;
+  color: var(--ink);
+  border-bottom: 2px solid var(--gold-soft);
+  transition: color .3s ease, border-color .3s ease;
+}
+.cs-foot__mail:hover { color: var(--gold); border-color: var(--gold); }
+.cs-foot__nav { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
+.cs-foot__nav a {
+  text-decoration: none;
+  color: var(--ink-2);
+  font-size: var(--step--1);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  transition: color .25s ease;
+}
+.cs-foot__nav a:hover { color: var(--gold); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-note summary::before { transition: none; }
+}

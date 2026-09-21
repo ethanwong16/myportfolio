@@ -52,6 +52,22 @@
       '</article>';
   }
 
+  function caseStudyCard(item, i) {
+    var tags = item.tags.map(function (t) {
+      return '<span class="tag">' + esc(t) + '</span>';
+    }).join('');
+
+    return '' +
+      '<article class="card" data-reveal style="--i:' + i + '">' +
+        '<header class="card__head"><div class="card__tags">' + tags + '</div></header>' +
+        '<h3 class="card__title">' + esc(item.title) + '</h3>' +
+        '<p class="card__org">' + esc(item.summary) + '</p>' +
+        '<div class="card__links">' +
+          '<a class="card__link" href="' + esc(item.href) + '">Read case study<span aria-hidden="true">&#8594;</span></a>' +
+        '</div>' +
+      '</article>';
+  }
+
   window.renderPage = function (mount) {
     var C = window.CONTENT;
 
@@ -85,10 +101,18 @@
         '</div>' +
       '</section>' +
 
+      /* ---- case studies ---- */
+      '<section class="band" id="case-studies">' +
+        '<div class="u-wrap">' +
+          '<h2 class="band__title" data-reveal><span class="band__num">02</span>Case Studies</h2>' +
+          '<div class="cards">' + C.caseStudies.map(caseStudyCard).join('') + '</div>' +
+        '</div>' +
+      '</section>' +
+
       /* ---- about ---- */
       '<section class="band" id="about">' +
         '<div class="u-wrap">' +
-          '<h2 class="band__title" data-reveal><span class="band__num">02</span>About</h2>' +
+          '<h2 class="band__title" data-reveal><span class="band__num">03</span>About</h2>' +
           '<div class="about">' +
             '<div>' +
               '<p class="about__text" data-reveal>' + esc(C.about) + '</p>' +
@@ -116,7 +140,7 @@
       /* ---- contact ---- */
       '<section class="band band--contact" id="contact">' +
         '<div class="u-wrap">' +
-          '<h2 class="band__title" data-reveal><span class="band__num">03</span>Contact</h2>' +
+          '<h2 class="band__title" data-reveal><span class="band__num">04</span>Contact</h2>' +
           '<p class="contact__line" data-reveal>' + esc(C.contact.line) + '</p>' +
           '<a class="contact__mail" data-reveal href="mailto:' + esc(C.contact.email) + '">' +
             esc(C.contact.email) + '</a>' +

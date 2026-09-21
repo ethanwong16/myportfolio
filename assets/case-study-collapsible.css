@@ -1,0 +1,191 @@
+/* ============================================================
+   case-study-collapsible.css — the "infographic-first" case
+   study shape: 4 major sections + an appendix, each collapsed
+   by default to just its static infographic. Expanding a section
+   reveals supporting diagrams + write-up underneath.
+
+   Depends on tokens.css + case-study.css (loaded before this file)
+   for palette, type scale, and the .cs-section/.cs-prose/
+   .cs-deepdive primitives this reuses. Self-contained beyond that.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   WIDE INFOGRAPHIC, NARROW PROSE — case-study.css caps .cs-sections
+   at the reading measure (~64ch), sized for paragraphs. A static
+   infographic (usually a slide/screenshot with its own baked-in
+   text) reads better with more room than a paragraph does, so this
+   template lifts that cap at the section level and re-applies it
+   directly to the text-bearing block types instead — safe to do
+   only here, since this stylesheet loads exclusively on pages using
+   this shape (case-study-skeleton.html / zsm-2.html), never on the
+   narrative template's pages.
+   ------------------------------------------------------------ */
+.cs-sections { max-width: none; }
+.cs-section__title,
+.cs-prose,
+.cs-personas,
+.cs-goals,
+.cs-metrics,
+.cs-expand {
+  max-width: var(--measure);
+}
+
+/* ------------------------------------------------------------
+   EXPAND-ALL BAR — one control above the section list that
+   toggles every section at once. Purely a convenience; each
+   section's own <details> works with zero JS.
+   ------------------------------------------------------------ */
+.cs-expand-all {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: .25rem;
+}
+.cs-expand-all__btn {
+  cursor: pointer;
+  background: none;
+  border: 1px dashed var(--line);
+  border-radius: 999px;
+  padding: .55em 1.15em;
+  font-size: var(--step--1);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  transition: border-color .25s ease, color .25s ease;
+}
+.cs-expand-all__btn:hover,
+.cs-expand-all__btn:focus-visible { border-color: var(--gold); color: var(--gold); }
+
+/* ------------------------------------------------------------
+   INFOGRAPHIC — always visible, whether the section is expanded
+   or not. A dashed frame stands in until a static image is
+   dropped in; once it is, just replace the placeholder <span>
+   with an <img> and the frame border falls away to a plain
+   figure (see the [data-filled] variant below).
+   ------------------------------------------------------------ */
+.cs-infographic { margin: 1.5rem 0 0; }
+.cs-infographic__frame {
+  display: grid;
+  place-items: center;
+  gap: .5rem;
+  min-height: clamp(220px, 32vw, 340px);
+  padding: 1.5rem;
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--paper-2) 40%, transparent);
+  text-align: center;
+}
+.cs-infographic__frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+/* once a real image is in place, add data-filled="true" to the
+   frame to drop the placeholder dashed styling. min-height resets
+   to 0 here too — the placeholder min-heights below exist to give
+   an empty frame some presence, but once there's a real image the
+   frame should hug it exactly, not leave dead space underneath. */
+.cs-infographic__frame[data-filled] {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  min-height: 0;
+}
+.cs-infographic__placeholder {
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.cs-infographic__placeholder small {
+  display: block;
+  margin-top: .4rem;
+  font-size: .68rem;
+  letter-spacing: .02em;
+  text-transform: none;
+  color: var(--ink-3);
+  opacity: .8;
+}
+.cs-infographic__caption {
+  margin-top: .75rem;
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* a section whose main graphic is a set of parallel images (one per
+   phase) rather than a single picture — same frame styling per item,
+   just two ways to arrange the set. Picked via infographic.layout,
+   see case-study-collapsible-render.js. */
+.cs-infographic--card .cs-infographic__grid,
+.cs-infographic--vertical .cs-infographic__grid {
+  display: grid;
+  gap: 1.25rem;
+}
+/* card — a responsive grid, several per row */
+.cs-infographic--card .cs-infographic__grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.cs-infographic--card .cs-infographic__frame { min-height: clamp(180px, 20vw, 260px); }
+
+/* vertical — one per row, each as wide as the column allows */
+.cs-infographic--vertical .cs-infographic__grid {
+  grid-template-columns: 1fr;
+}
+.cs-infographic--vertical .cs-infographic__frame { min-height: clamp(240px, 34vw, 460px); }
+
+/* ------------------------------------------------------------
+   EXPAND — the per-section disclosure holding the supporting
+   diagrams + write-up. Native <details>, same convention as
+   .cs-note in case-study.css, just sized for a section instead
+   of an inline aside.
+   ------------------------------------------------------------ */
+.cs-expand {
+  margin-top: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--paper-2) 30%, transparent);
+}
+.cs-expand__toggle {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .9em 1.25em;
+  font-size: var(--step--1);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--gold);
+}
+.cs-expand__toggle::-webkit-details-marker { display: none; }
+.cs-expand__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.3em;
+  height: 1.3em;
+  border-radius: 50%;
+  border: 1px solid var(--gold-soft);
+  font-weight: 400;
+}
+.cs-expand__icon::before { content: "+"; }
+.cs-expand[open] .cs-expand__icon::before { content: "\2212"; }
+.cs-expand__body {
+  padding: .25rem 1.25em 1.5em;
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* additional diagrams inside an expanded section reuse the
+   deep-dive frame from case-study.css for a placeholder look;
+   stack them with a little more room than .cs-deepdive's own
+   internal gap when there's more than one per section */
+.cs-expand__body .cs-deepdive + .cs-deepdive { margin-top: .25rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-expand__icon { transition: none; }
+}
