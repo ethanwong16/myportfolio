@@ -374,6 +374,7 @@
       fillAlpha: 1,
       waveMs: 1150,
       fadeMs: 950,
+      litMs: 1300,
       parallax: 0,
       autoFireMs: 3000,
       narrowAt: 640,
@@ -482,9 +483,16 @@
         return;
       }
 
-      measure();
-      field.trigger(origin.x, origin.y, origin.max);
-      setTimeout(finish, cfg.waveMs + cfg.fadeMs + 120);
+      /* "life" gets its colour first and holds there a beat, on its
+         own fast transition, before the wave actually spreads —
+         a beat of anticipation so the moment reads as deliberate,
+         not just a click that happens to cause a color change. */
+      lifeEl.classList.add('is-lit');
+      setTimeout(function () {
+        measure();
+        field.trigger(origin.x, origin.y, origin.max);
+      }, cfg.litMs);
+      setTimeout(finish, cfg.litMs + cfg.waveMs + cfg.fadeMs + 120);
     }
 
     /* --- input ---

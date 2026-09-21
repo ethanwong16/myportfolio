@@ -89,6 +89,20 @@
   box-shadow: 0 14px 40px -28px rgba(90, 60, 10, .55);
 }
 
+/* a card whose only link should make the whole card clickable —
+   the "stretched link" pattern: one real anchor, sized to cover
+   the card via ::after, so there's still just one interactive
+   element for keyboard/screen readers, not a card-sized click
+   trap around a nested one. Only use where a card has exactly
+   one link; more than one and the stretch would swallow the rest. */
+.card--linked { position: relative; cursor: pointer; }
+.card__link--stretched::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
 .card__head {
   display: flex;
   align-items: center;

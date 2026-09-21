@@ -110,9 +110,16 @@
   color: var(--ink);
   font-style: normal;
   position: relative;
+  transition: color .4s ease;
 }
 
-/* gold arrives with the wave */
+/* the click/tap/auto-fire lands here first, held for a beat on its
+   own fast transition — a moment of "something's happening" before
+   the wave itself spreads outward from this exact point */
+.life.is-lit { color: var(--gold); }
+
+/* gold arrives with the wave (and stays, once .is-lit already got
+   there first) */
 .warm .life,
 html.is-warm .life {
   color: var(--gold);
