@@ -4,9 +4,9 @@
    layout.css; this file only overrides what makes this direction
    itself, and loads after both.
 
-   Energetic. Many small pieces across the whole viewport that
-   swarm inward and lock into built forms — cubes, arches, stacks.
-   The forms stay put afterwards and drift on scroll.
+   Energetic. Many small pieces across the whole viewport, drifting
+   loosely before and after the ripple — only their colour resolves
+   from cold grey to warm gold as the wave passes each one.
    ============================================================ */
 
 body {

@@ -5,7 +5,8 @@
    ============================================================ */
 
 /* ------------------------------------------------------------
-   NAV — only after the reveal
+   NAV — always present, cold or warm; only its colors (via the
+   --paper/--ink tokens) shift when the ripple fires
    ------------------------------------------------------------ */
 .nav {
   position: fixed;
@@ -21,17 +22,7 @@
   background: color-mix(in srgb, var(--paper) 82%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid transparent;
-  opacity: 0;
-  transform: translateY(-100%);
-  pointer-events: none;
-  transition: opacity .6s var(--ease-out), transform .6s var(--ease-out),
-              border-color .3s ease;
-}
-html.is-warm .nav {
-  opacity: 1;
-  transform: none;
-  pointer-events: auto;
-  transition-delay: .25s;
+  transition: background-color .3s ease, border-color .3s ease;
 }
 .nav.is-stuck { border-bottom-color: var(--line); }
 
