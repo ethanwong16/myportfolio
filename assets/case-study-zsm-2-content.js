@@ -58,9 +58,9 @@
 
 window.CASE_STUDY = {
   meta: {
-    title: '',           // case study title — also becomes the <title>
-    summary: '',         // 1-2 sentence hook, shown under the title
-    tags: [],             // e.g. ['Strategy', '0→1', 'AI/ML'] — short, plural-free
+    title: 'Optimizing For AI Search Agents - Structured Markup',
+    summary: 'A case study on structured markup product strategy & execution. Unlocks rich semantic context for agentic search systems',
+    tags: ['0→1', 'AI Search', 'SEO/GEO'],             // e.g. ['Strategy', '0→1', 'AI/ML'] — short, plural-free
     facts: [
       // any 2-6 label/value pairs; Role/Team/Timeframe/Company is
       // the default set but not required
@@ -88,8 +88,15 @@ window.CASE_STUDY = {
       expand: {
         // label: 'Show diagrams & write-up',
         body: [
-          // '...',
-          // { note: 'Why this problem, and not the others', body: '...' }
+          {
+            note: 'Structured markup unlocks easy Zillow data ingestion for AI search bots and has powerful semantic expression capabilities',
+            body: 'At its core, search for Zillow is still about getting users to the right answers, listings, and tools that unlock the door to their home. In AI search systems, we can do this by leveraging structured markup to represent data in a standardized way, provide direct answers to "what is" queries, and clarify page content entities / their relationships.'
+          },
+          'In agentic search systems, search mechanics become more nuanced and complex thanks to large language models and refined agents built on top of them.',
+          'Users have supercharged means of expressing themselves, and it is up to AI search systems to translate context into the perfect answer.',
+          'Now users can go multi-modal with images, voice recordings, past conversation context, your emails, you name it. And agents have the means to extract out the subtleties of your preferences.',
+          'But this is all limited by how deeply agentic search systems can dive into and leverage the rich set of listings, advice, subject matter experts, and tools that Zillow web surfaces display.',
+          'Search bots need standardized, reliable ways of ingesting site data to build knowledge graphs for LLMs and map your particular content to longer-tail user queries.'
         ]
         // deepdive: { frameLabel: '', body: [] }  // an extra supporting diagram
       }
@@ -105,7 +112,12 @@ window.CASE_STUDY = {
         caption: 'From user needs to bot needs to product requirements'
       },
       expand: {
-        body: [ /* optional framing connecting needs to goals */ ],
+        body: [
+          {
+            note: 'Bot proxy "users" are central to the web search space!',
+            body: 'The search engine space is especially fun and challenging because you have a proxy "user". Both bots that crawl your site and the blackbox search engine it feeds are the "users" your site needs to optimize for in order to reach your actual end users.'
+          }
+        ],
         personas: [
           // { name: '', role: '', quote: '', needs: ['', ''] }
           // `quote` and `needs` are both optional
@@ -144,8 +156,23 @@ window.CASE_STUDY = {
       },
       expand: {
         body: [
-          // '...',
-          // { note: 'Options considered', body: '...' }
+          'Two ways to look at the same change. Zoomed in, it’s a page-source problem: the facts a bot needs are scattered across a dozen HTML tags, in whatever format each tag happens to use. Zoomed out, it’s a graph problem: that scattering has no shared structure at all, so a bot has to reconstruct one from nothing.',
+          'Consolidating both into a single, typed JSON-LD tree in <head> fixes both problems with one move — and the three things that improve are the same three things bots and agentic search systems actually need: semantic richness, structured topology, and rendering ease.',
+          'Three phases, each one a step up from the last: ship the markup itself, then build the guardrails to trust it at scale, then invest in the tooling that collapses the whole authoring lifecycle from weeks to days.',
+          {
+            note: 'Phase 1 — MVP: Enhanced structured markup, rolled out across core listing pages',
+            body: 'Target the highest-traffic pages first, based on traditional search hit patterns. Expose full property details on detail pages, and the key details overview on search results pages. Ship gated behind feature flags for a controlled rollout, covering FS/FR search results and listing detail pages. Success measured by schema quality + detail coverage metrics, no traffic or performance degradation, and AI search sentiment + eval results.'
+          },
+          {
+            note: 'Phase 2 — Guardrails & Quality Control: A test system to shepherd quality standards at scale',
+            body: 'Stand up evaluations that check what a model can actually extract and answer about listing details, then compile those eval results plus SEO standards into a concrete scorecard. Bundle the evals, key issue debugs, and advisory knowledge into a distributable SEO consultant agent / plugin, so degradations and violations get caught, not missed.'
+          },
+          {
+            note: 'Phase 3 — Rapid Iteration & Experimentation: Infrastructure for a faster SDLC, without losing the review gates',
+            body: 'Solve for the complexity of mapping user research into tangible technical schema requirements, and align that same schema across different teams’ codebases and templated page variants — a centralized structured markup repo, a schema playground for PMs to self-serve, schema build agents that turn natural language into markup, and an auto dispatcher that attempts ingestion into subscribed codebases so devs just review instead of filing manual change requests.'
+          },
+          'Two views into how the phases above actually run day to day: the release workflow from prototyping through development to QA & release, and the day-to-day loop between the SEO agent, the bot, and the user-facing experience.',
+          { quote: 'What used to take 4–5 weeks end to end now takes 4–8 days.' }
         ]
         // funnel: '<key>',   // an interactive decision funnel — see field
         // workflow: '<key>', // reference in case-study-content.template.js
